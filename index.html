@@ -3,171 +3,137 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
-  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+        content="TEM: a scalable Transformer Energy-Based Model that generates high-fidelity ImageNet 256x256 and 512x512 images with a contrastively trained EBM.">
+  <meta name="keywords" content="TEM, Energy-Based Models, EBM, Transformer, Image Generation, ImageNet">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nerfies: Deformable Neural Radiance Fields</title>
-
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-PYVRSFMDRL');
-  </script>
+  <title>Scaling Transformer Energy-Based Models for High Quality Image Synthesis</title>
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
         rel="stylesheet">
 
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="icon" href="./static/images/favicon.svg">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
+  <script>
+    window.MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    .figure-caption { font-size: 0.95rem; color: #4a4a4a; margin-top: 0.75rem; text-align: justify; }
+    .figure-caption b { color: #363636; }
+    .img-shadow { border-radius: 6px; }
+
+    /* Teaser grid */
+    .teaser-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
+    .teaser-grid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .teaser-grid .big { grid-column: span 2; grid-row: span 2; }
+    .compose-box { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+    .compose-box .pair { display: flex; gap: 6px; }
+    .compose-box figure { margin: 0; text-align: center; }
+    .compose-box img { width: 100%; max-width: 150px; display: block; border-radius: 4px; }
+    .compose-box .arrow { font-size: 1.6rem; color: #888; margin: 4px 0; }
+    .compose-box figcaption { font-style: italic; font-size: 0.85rem; color: #555; }
+
+    /* Generic image rows */
+    .img-row { display: grid; gap: 6px; }
+    .img-row img { width: 100%; display: block; border-radius: 4px; }
+    .img-row figure { margin: 0; text-align: center; }
+    .img-row figcaption { font-size: 0.85rem; color: #555; margin-top: 2px; }
+    .cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .cols-6 { grid-template-columns: repeat(6, 1fr); }
+    .cols-7 { grid-template-columns: repeat(7, 1fr); }
+
+    /* Architecture + per-head samples */
+    .arch-heads { display: grid; grid-template-columns: 5fr 1.05fr auto 2fr; align-items: center; gap: 12px; }
+    .arch-img { width: 100%; display: block; }
+    .head-stack { display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
+    .head-stack figure, .head-sum { margin: 0; text-align: center; }
+    .head-stack img, .head-sum img { width: 100%; display: block; border-radius: 4px; }
+    .head-stack figcaption, .head-sum figcaption { font-size: 0.78rem; color: #555; margin-top: 1px; }
+    .head-sum-op { display: flex; flex-direction: column; align-items: center; color: #888; font-size: 1.3rem; }
+    .head-sum img { box-shadow: 0 0 0 3px #f6c453; }
+
+    /* Sampling GIFs */
+    .refine-gifs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 1400px; margin: 0 auto; }
+    .refine-gifs img { width: 100%; display: block; border-radius: 6px; background: #fff; }
+
+    /* Gallery */
+    .gallery { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
+    .gallery img { width: 100%; display: block; }
+
+    /* Tables */
+    .results-table { overflow-x: auto; }
+    .results-table table { margin: 0 auto; font-size: 0.92rem; }
+    .results-table th, .results-table td { text-align: center !important; vertical-align: middle !important; white-space: nowrap; }
+    .results-table td:first-child, .results-table th:first-child { text-align: left !important; }
+    .results-table tr.group td { font-style: italic; font-weight: 600; background: #f5f5f5; text-align: left !important; }
+    .results-table tr.ours td { background: #eef6ff; font-weight: 600; }
+
+    .eq-block { overflow-x: auto; }
+    .section .title.is-3 { margin-top: 0.5rem; }
+
+    @media (max-width: 768px) {
+      .gallery { grid-template-columns: repeat(4, 1fr); }
+      .refine-gifs { grid-template-columns: 1fr; }
+      .arch-heads { grid-template-columns: 1fr 1fr; }
+      .arch-img { grid-column: span 2; }
+      .head-sum-op { display: none; }
+      .teaser-grid { grid-template-columns: repeat(4, 1fr); }
+      .cols-7 { grid-template-columns: repeat(4, 1fr); }
+      .cols-6 { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
 </head>
 <body>
-
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="https://keunhong.com">
-      <span class="icon">
-          <i class="fas fa-home"></i>
-      </span>
-      </a>
-
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link">
-          More Research
-        </a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="https://hypernerf.github.io">
-            HyperNeRF
-          </a>
-          <a class="navbar-item" href="https://nerfies.github.io">
-            Nerfies
-          </a>
-          <a class="navbar-item" href="https://latentfusion.github.io">
-            LatentFusion
-          </a>
-          <a class="navbar-item" href="https://photoshape.github.io">
-            PhotoShape
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</nav>
-
 
 <section class="hero">
   <div class="hero-body">
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">Nerfies: Deformable Neural Radiance Fields</h1>
+          <h1 class="title is-1 publication-title">Scaling Transformer Energy-Based Models for High Quality Image Synthesis</h1>
           <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              <a href="https://keunhong.com">Keunhong Park</a><sup>1</sup>,</span>
-            <span class="author-block">
-              <a href="https://utkarshsinha.com">Utkarsh Sinha</a><sup>2</sup>,</span>
-            <span class="author-block">
-              <a href="https://jonbarron.info">Jonathan T. Barron</a><sup>2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="http://sofienbouaziz.com">Sofien Bouaziz</a><sup>2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://www.danbgoldman.com">Dan B Goldman</a><sup>2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://homes.cs.washington.edu/~seitz/">Steven M. Seitz</a><sup>1,2</sup>,
-            </span>
-            <span class="author-block">
-              <a href="http://www.ricardomartinbrualla.com">Ricardo Martin-Brualla</a><sup>2</sup>
-            </span>
+            <span class="author-block">Jungsoo Lee<sup>1</sup>,</span>
+            <span class="author-block">Alexi Gladstone<sup>2</sup>,</span>
+            <span class="author-block">Yilun Du<sup>3</sup></span>
           </div>
 
           <div class="is-size-5 publication-authors">
-            <span class="author-block"><sup>1</sup>University of Washington,</span>
-            <span class="author-block"><sup>2</sup>Google Research</span>
+            <span class="author-block"><sup>1</sup>MIT,</span>
+            <span class="author-block"><sup>2</sup>UIUC,</span>
+            <span class="author-block"><sup>3</sup>Harvard University</span>
           </div>
 
           <div class="column has-text-centered">
             <div class="publication-links">
-              <!-- PDF Link. -->
+              <!-- TODO: replace '#' with the real links. -->
               <span class="link-block">
-                <a href="https://arxiv.org/pdf/2011.12948"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fas fa-file-pdf"></i>
-                  </span>
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
                   <span>Paper</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="https://arxiv.org/abs/2011.12948"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                  </span>
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
                   <span>arXiv</span>
                 </a>
               </span>
-              <!-- Video Link. -->
               <span class="link-block">
-                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-youtube"></i>
-                  </span>
-                  <span>Video</span>
+                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
                 </a>
               </span>
-              <!-- Code Link. -->
-              <span class="link-block">
-                <a href="https://github.com/google/nerfies"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code</span>
-                  </a>
-              </span>
-              <!-- Dataset Link. -->
-              <span class="link-block">
-                <a href="https://github.com/google/nerfies/releases/tag/0.1"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="far fa-images"></i>
-                  </span>
-                  <span>Data</span>
-                  </a>
             </div>
-
           </div>
         </div>
       </div>
@@ -175,316 +141,374 @@
   </div>
 </section>
 
+<!-- Teaser -->
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <video id="teaser" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/teaser.mp4"
-                type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
-        free-viewpoint
-        portraits.
-      </h2>
-    </div>
-  </div>
-</section>
-
-
-<section class="hero is-light is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-steve">
-          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/steve.mp4"
-                    type="video/mp4">
-          </video>
+      <div class="columns is-vcentered">
+        <div class="column is-two-thirds">
+          <div class="teaser-grid">
+            <img class="big" src="./static/images/tem/samples/class0279_n02120079.png" alt="512x512 sample">
+            <img class="big" src="./static/images/tem/samples/class0090_n01820546.png" alt="512x512 sample">
+            <img src="./static/images/tem/samples/class_0755.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0022.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0302.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0192.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0032.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0403.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0985.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0282.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0112.png" alt="sample">
+            <img src="./static/images/tem/samples/class_0105.png" alt="sample">
+          </div>
         </div>
-        <div class="item item-chair-tp">
-          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/chair-tp.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-shiba">
-          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/shiba.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-fullbody">
-          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/fullbody.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-blueshirt">
-          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/blueshirt.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-mask">
-          <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/mask.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-coffee">
-          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/coffee.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <div class="item item-toby">
-          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/toby2.mp4"
-                    type="video/mp4">
-          </video>
+        <div class="column">
+          <div class="compose-box">
+            <div class="pair">
+              <figure><img src="./static/images/tem/comp/zebra.png" alt="zebra"><figcaption>"zebra"</figcaption></figure>
+              <figure><img src="./static/images/tem/comp/beach.png" alt="beach"><figcaption>"beach"</figcaption></figure>
+            </div>
+            <div class="arrow"><i class="fas fa-arrow-down"></i> &nbsp;$E_1 + E_2$</div>
+            <figure><img src="./static/images/tem/comp/zebra_beach.png" alt="zebra + beach"><figcaption>composed result</figcaption></figure>
+          </div>
         </div>
       </div>
+      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+        <span class="dnerf">TEM</span> is a contrastively trained energy-based model that generates
+        high-fidelity ImageNet 256&times;256 and 512&times;512 images from pure noise,
+        and composes concepts simply by adding energies.
+      </h2>
+      <p class="figure-caption">
+        <b>Left:</b> uncurated class-conditional samples from TEM-XL/2 (80 sampling steps). The two large images are
+        512&times;512; the rest are 256&times;256. <b>Right:</b> summing the energy functions of two independent classes
+        produces a coherent scene that satisfies both concepts, with no retraining.
+      </p>
     </div>
   </div>
 </section>
 
-
+<!-- Abstract -->
 <section class="section">
   <div class="container is-max-desktop">
-    <!-- Abstract. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            We present the first method capable of photorealistically reconstructing a non-rigidly
-            deforming scene using photos/videos captured casually from mobile phones.
+            Energy-Based Models (EBMs) are a flexible class of generative models that decouple probabilistic modeling
+            from the generation process. This decoupling directly enables compositional generation and inference-time
+            scaling, where sample quality can be refined simply by increasing sampling steps. However, severe challenges
+            in high-dimensional sampling and training instabilities with deep architectures have restricted EBMs to
+            low-dimensional regimes.
           </p>
           <p>
-            Our approach augments neural radiance fields
-            (NeRF) by optimizing an
-            additional continuous volumetric deformation field that warps each observed point into a
-            canonical 5D NeRF.
-            We observe that these NeRF-like deformation fields are prone to local minima, and
-            propose a coarse-to-fine optimization method for coordinate-based models that allows for
-            more robust optimization.
-            By adapting principles from geometry processing and physical simulation to NeRF-like
-            models, we propose an elastic regularization of the deformation field that further
-            improves robustness.
+            To resolve these bottlenecks, we introduce the <b>Transformer Energy-Based Model (TEM)</b>, a scalable
+            transformer energy function operating entirely within a latent space. On top of this backbone, we extract
+            energies at multiple layers and sum them, composing complementary constraints from local texture to global
+            semantics. Furthermore, two components make this high-quality at scale: <b>Positive Representation
+            Alignment (PRA)</b>, which supervises TEM's intermediate representations with a vision foundation model,
+            and advanced sampling strategies that improve sample quality at inference.
           </p>
           <p>
-            We show that <span class="dnerf">Nerfies</span> can turn casually captured selfie
-            photos/videos into deformable NeRF
-            models that allow for photorealistic renderings of the subject from arbitrary
-            viewpoints, which we dub <i>"nerfies"</i>. We evaluate our method by collecting data
-            using a
-            rig with two mobile phones that take time-synchronized photos, yielding train/validation
-            images of the same pose at different viewpoints. We show that our method faithfully
-            reconstructs non-rigidly deforming scenes and reproduces unseen views with high
-            fidelity.
+            TEM-XL achieves an FID-50K of <b>3.82</b> on class-conditional ImageNet 256&times;256 without
+            classifier-free guidance, showing that a contrastive EBM can generate high-fidelity images. On ImageNet
+            512&times;512, TEM achieves an FID-50K of <b>8.24</b>, demonstrating that the approach scales to higher
+            resolution. We further validate the core promises of EBMs: compositional generation, zero-shot inpainting,
+            and out-of-distribution detection.
           </p>
         </div>
       </div>
     </div>
-    <!--/ Abstract. -->
-
-    <!-- Paper video. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Video</h2>
-        <div class="publication-video">
-          <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0"
-                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-      </div>
-    </div>
-    <!--/ Paper video. -->
   </div>
 </section>
 
-
+<!-- Scaling -->
 <section class="section">
   <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Scaling Behavior</h2>
+    <div class="img-row cols-3">
+      <img src="./static/images/tem/fid_vs_steps_0926.png" alt="FID vs training steps">
+      <img src="./static/images/tem/fid_vs_training_gflops_0926.png" alt="FID vs training GFLOPs">
+      <img src="./static/images/tem/fid_vs_gflops_xl_0926.png" alt="FID vs GFLOPs against diffusion baselines">
+    </div>
+    <p class="figure-caption">
+      <i>Left:</i> FID-50K vs. training steps across model sizes; larger models are better at every checkpoint.
+      <i>Middle:</i> all four sizes follow a consistent compute&ndash;quality trend.
+      <i>Right:</i> TEM-XL against DiT-XL, SiT-XL and SiT-XL+REPA: TEM scales more steeply and reaches a lower
+      unguided FID with less training compute.
+    </p>
+  </div>
+</section>
 
-    <div class="columns is-centered">
+<!-- Method -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Method</h2>
 
-      <!-- Visual Effects. -->
+    <div class="arch-heads">
+      <img class="arch-img" src="./static/images/tem/architecture_tnr_revised.png" alt="TEM architecture">
+      <div class="head-stack">
+        <figure><img src="./static/images/tem/heads/cls139_heads2.png" alt="final head sample"><figcaption>$E_{\text{fin}}$: semantics</figcaption></figure>
+        <figure><img src="./static/images/tem/heads/cls139_heads1.png" alt="middle head sample"><figcaption>$E_{\text{mid}}$: layout</figcaption></figure>
+        <figure><img src="./static/images/tem/heads/cls139_heads0.png" alt="early head sample"><figcaption>$E_{\text{early}}$: texture</figcaption></figure>
+      </div>
+      <div class="head-sum-op"><span>$\sum$</span><i class="fas fa-arrow-right"></i></div>
+      <figure class="head-sum">
+        <img src="./static/images/tem/heads/cls139_headsfull.png" alt="sample from summed energy">
+        <figcaption>$E_{\text{early}} + E_{\text{mid}} + E_{\text{fin}}$</figcaption>
+      </figure>
+    </div>
+    <p class="figure-caption">
+      <b>Multi-layer energy composition.</b> TEM processes VAE-encoded latent tokens through a stack of TEM blocks, and
+      energy heads at early, middle and final depths each output a scalar energy. Sampling from one head at a time shows
+      what each one enforces: the early head recovers local texture without global structure, the middle head captures
+      object layout without fine detail, and the final head keeps only coarse semantics. Sampling from their
+      <b>sum</b> satisfies all three at once.
+    </p>
+
+    <div class="columns is-centered is-vcentered" style="margin-top: 2rem;">
+      <div class="column is-6">
+        <img class="img-shadow" src="./static/images/tem/Trainingstrategy_tmr.png" alt="Training strategy">
+      </div>
       <div class="column">
-        <div class="content">
-          <h2 class="title is-3">Visual Effects</h2>
-          <p>
-            Using <i>nerfies</i> you can create fun visual effects. This Dolly zoom effect
-            would be impossible without nerfies since it would require going through a wall.
-          </p>
-          <video id="dollyzoom" autoplay controls muted loop playsinline height="100%">
-            <source src="./static/videos/dollyzoom-stacked.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-      </div>
-      <!--/ Visual Effects. -->
-
-      <!-- Matting. -->
-      <div class="column">
-        <h2 class="title is-3">Matting</h2>
-        <div class="columns is-centered">
-          <div class="column content">
-            <p>
-              As a byproduct of our method, we can also solve the matting problem by ignoring
-              samples that fall outside of a bounding box during rendering.
-            </p>
-            <video id="matting-video" controls playsinline height="100%">
-              <source src="./static/videos/matting.mp4"
-                      type="video/mp4">
-            </video>
-          </div>
-
-        </div>
+        <p class="figure-caption">
+          <b>Training strategy.</b> Contrastive training pushes down the energy of data samples $x^+$ and pushes up the
+          energy of MCMC negatives $x^-$, while Positive Representation Alignment (PRA) aligns the model's internal
+          features with a frozen vision foundation model.
+        </p>
       </div>
     </div>
-    <!--/ Matting. -->
-
-    <!-- Animation. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Animation</h2>
-
-        <!-- Interpolating. -->
-        <h3 class="title is-4">Interpolating states</h3>
-        <div class="content has-text-justified">
-          <p>
-            We can also animate the scene by interpolating the deformation latent codes of two input
-            frames. Use the slider here to linearly interpolate between the left frame and the right
-            frame.
-          </p>
-        </div>
-        <div class="columns is-vcentered interpolation-panel">
-          <div class="column is-3 has-text-centered">
-            <img src="./static/images/interpolate_start.jpg"
-                 class="interpolation-image"
-                 alt="Interpolate start reference image."/>
-            <p>Start Frame</p>
-          </div>
-          <div class="column interpolation-video-column">
-            <div id="interpolation-image-wrapper">
-              Loading...
-            </div>
-            <input class="slider is-fullwidth is-large is-info"
-                   id="interpolation-slider"
-                   step="1" min="0" max="100" value="0" type="range">
-          </div>
-          <div class="column is-3 has-text-centered">
-            <img src="./static/images/interpolate_end.jpg"
-                 class="interpolation-image"
-                 alt="Interpolation end reference image."/>
-            <p class="is-bold">End Frame</p>
-          </div>
-        </div>
-        <br/>
-        <!--/ Interpolating. -->
-
-        <!-- Re-rendering. -->
-        <h3 class="title is-4">Re-rendering the input video</h3>
-        <div class="content has-text-justified">
-          <p>
-            Using <span class="dnerf">Nerfies</span>, you can re-render a video from a novel
-            viewpoint such as a stabilized camera by playing back the training deformations.
-          </p>
-        </div>
-        <div class="content has-text-centered">
-          <video id="replay-video"
-                 controls
-                 muted
-                 preload
-                 playsinline
-                 width="75%">
-            <source src="./static/videos/replay.mp4"
-                    type="video/mp4">
-          </video>
-        </div>
-        <!--/ Re-rendering. -->
-
-      </div>
-    </div>
-    <!--/ Animation. -->
-
-
-    <!-- Concurrent Work. -->
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Related Links</h2>
-
-        <div class="content has-text-justified">
-          <p>
-            There's a lot of excellent work that was introduced around the same time as ours.
-          </p>
-          <p>
-            <a href="https://arxiv.org/abs/2104.09125">Progressive Encoding for Neural Optimization</a> introduces an idea similar to our windowed position encoding for coarse-to-fine optimization.
-          </p>
-          <p>
-            <a href="https://www.albertpumarola.com/research/D-NeRF/index.html">D-NeRF</a> and <a href="https://gvv.mpi-inf.mpg.de/projects/nonrigid_nerf/">NR-NeRF</a>
-            both use deformation fields to model non-rigid scenes.
-          </p>
-          <p>
-            Some works model videos with a NeRF by directly modulating the density, such as <a href="https://video-nerf.github.io/">Video-NeRF</a>, <a href="https://www.cs.cornell.edu/~zl548/NSFF/">NSFF</a>, and <a href="https://neural-3d-video.github.io/">DyNeRF</a>
-          </p>
-          <p>
-            There are probably many more by the time you are reading this. Check out <a href="https://dellaert.github.io/NeRF/">Frank Dellart's survey on recent NeRF papers</a>, and <a href="https://github.com/yenchenlin/awesome-NeRF">Yen-Chen Lin's curated list of NeRF papers</a>.
-          </p>
-        </div>
-      </div>
-    </div>
-    <!--/ Concurrent Work. -->
 
   </div>
 </section>
 
+<!-- Sampling slider -->
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3 has-text-centered">Watch Samples Refine</h2>
+      <div class="refine-gifs">
+        <img src="./static/images/tem/refine_snail.gif" alt="Snail sample refining over 120 sampling steps, with its energy curve">
+        <img src="./static/images/tem/refine_lemon.gif" alt="Lemon sample refining over 120 sampling steps, with its energy curve">
+      </div>
+      <p class="figure-caption has-text-centered">
+        Energy decreases steadily as sampling proceeds. At the training horizon (40 steps) coarse structure is
+        established but residual noise remains; continuing past it produces increasingly sharp, class-typical images.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Results -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Results on ImageNet</h2>
+
+
+
+    <h3 class="title is-4" style="margin-top: 2.5rem;">Fidelity&ndash;diversity trade-off at inference time</h3>
+    <div class="columns is-vcentered">
+      <div class="column is-7">
+        <img src="./static/images/tem/fid_is_tradeoff_new.png" alt="FID vs IS trade-off">
+      </div>
+      <div class="column">
+        <div class="results-table">
+          <table class="table is-narrow">
+            <thead><tr><th>Model</th><th>Steps</th><th>FID&darr;</th><th>IS&uarr;</th><th>Prec.</th><th>Rec.</th></tr></thead>
+            <tbody>
+              <tr><td>TEM-XL</td><td>40</td><td>7.63</td><td>106.0</td><td>0.65</td><td>0.65</td></tr>
+              <tr class="ours"><td>TEM-XL</td><td>60</td><td>3.82</td><td>176.2</td><td>0.76</td><td>0.57</td></tr>
+              <tr><td>TEM-XL</td><td>80</td><td>4.72</td><td>221.1</td><td>0.81</td><td>0.51</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      FID-50K vs. Inception Score for TEM-XL when increasing the number of sampling steps (blue) or the step size
+      (green) from the training configuration ($T=40$, $\eta=500$). A moderate increase improves both metrics; beyond
+      that, IS keeps rising while FID degrades. This mirrors the trade-off controlled by classifier-free guidance, from
+      a single network with no retraining.
+    </p>
+  </div>
+</section>
+
+<!-- PRA ablation -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Align Positives Only</h2>
+    <div class="columns is-vcentered">
+      <div class="column is-6">
+        <img src="./static/images/tem/fid_pra_B_final.png" alt="Effect of PRA">
+      </div>
+      <div class="column content">
+        <p>
+          PRA lowers FID-50K of TEM-B from <b>42.8 to 19.9</b> at 50K steps. Also aligning negative samples
+          (Pos+Neg RA) still helps over no alignment but reaches only <b>36.6</b>, erasing most of the gain:
+          negatives give the wrong alignment target.
+        </p>
+        <p>
+          Unlike representation alignment in diffusion models, where a noisy input is aligned with features of its
+          clean counterpart, both TEM and the VFM see the same clean $x^+$. PRA does not guide any sampling trajectory;
+          it shapes the geometry of the low-energy region directly.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Applications -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Applications</h2>
+
+    <h3 class="title is-4">Compositional generation</h3>
+    <div class="content has-text-justified">
+      <p>
+        For two energy-defined distributions, the product $p_1(x)p_2(x) \propto \exp(-(E_1(x)+E_2(x)))$. Sampling with
+        the summed energy gives images that satisfy both concepts at once.
+      </p>
+    </div>
+    <div class="img-row cols-4">
+      <figure><img src="./static/images/tem/comp/shark+carmirror.png" alt="white shark + car mirror"><figcaption>white shark + car mirror</figcaption></figure>
+      <figure><img src="./static/images/tem/comp/bordercollie+rapeseed.png" alt="border collie + rapeseed"><figcaption>border collie + rapeseed</figcaption></figure>
+      <figure><img src="./static/images/tem/comp/Petridish+strawberry.png" alt="strawberry + petri dish"><figcaption>strawberry + petri dish</figcaption></figure>
+      <figure><img src="./static/images/tem/comp/lemon+fountain.png" alt="lemon + fountain"><figcaption>lemon + fountain</figcaption></figure>
+    </div>
+
+    <div class="columns is-centered is-vcentered" style="margin-top: 2rem;">
+      <div class="column is-5">
+        <div class="img-row cols-3">
+          <img src="./static/images/tem/clevr/image_040_origin.png" alt="CLEVR condition">
+          <img src="./static/images/tem/clevr/image_021_origin.png" alt="CLEVR condition">
+          <img src="./static/images/tem/clevr/image_086_origin.png" alt="CLEVR condition">
+          <img src="./static/images/tem/clevr/image_040.png" alt="CLEVR TEM sample">
+          <img src="./static/images/tem/clevr/image_021.png" alt="CLEVR TEM sample">
+          <img src="./static/images/tem/clevr/image_086.png" alt="CLEVR TEM sample">
+        </div>
+      </div>
+      <div class="column">
+        <div class="results-table">
+          <table class="table is-narrow">
+            <thead><tr><th>Model</th><th>1 obj.</th><th>2 obj.</th><th>3 obj.</th></tr></thead>
+            <tbody>
+              <tr><td>Comp. Diffusion</td><td>0.863</td><td>0.598</td><td>0.262</td></tr>
+              <tr class="ours"><td>TEM (ours)</td><td>0.956</td><td>0.766</td><td>0.274</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <b>CLEVR 256&times;256 compositional generation.</b> <i>Top row:</i> conditioning inputs; yellow boxes are the
+      specified object positions. <i>Bottom row:</i> TEM-B samples; green boxes mark detected objects. <i>Table:</i>
+      object detection success rate (&uarr;) over 1,000 scenes, compared with Composable Diffusion.
+    </p>
+
+    <h3 class="title is-4" style="margin-top: 2.5rem;">Zero-shot inpainting</h3>
+    <div class="content has-text-justified">
+      <p>
+        Because TEM defines a single energy over image latents, inpainting is just sampling on the missing region while
+        resetting the observed latents to their encoded values after each step. The image is masked before VAE
+        encoding, so no ground-truth content leaks into the hole.
+      </p>
+    </div>
+    <div class="img-row cols-6">
+      <figure><img src="./static/images/tem/inpaint/In_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask1.png" alt="T=0"><figcaption>$T=0$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask2.png" alt="T=20"><figcaption>$T=20$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask3.png" alt="T=40"><figcaption>$T=40$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask4.png" alt="T=60"><figcaption>$T=60$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask5.png" alt="T=80"><figcaption>$T=80$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask1.png" alt="T=0"><figcaption>$T=0$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask2.png" alt="T=20"><figcaption>$T=20$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask3.png" alt="T=40"><figcaption>$T=40$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask4.png" alt="T=60"><figcaption>$T=60$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask5.png" alt="T=80"><figcaption>$T=80$</figcaption></figure>
+    </div>
+    <p class="figure-caption">Inpainting a meerkat (top) and a movie theater (bottom) across sampling steps.</p>
+
+    <h3 class="title is-4" style="margin-top: 2.5rem;">Out-of-distribution detection</h3>
+    <div class="columns is-vcentered">
+      <div class="column content">
+        <p>
+          A single forward pass of the unconditional energy $E_\theta(x)$ gives an OOD score, with no task-specific
+          training, labels, or calibration. Diffusion baselines are scored by their denoising residual with one network
+          evaluation. SiT+REPA receives the same DINOv2 alignment yet scores close to SiT, so alignment alone does not
+          explain the gap: the scalar energy does.
+        </p>
+      </div>
+      <div class="column">
+        <div class="results-table">
+          <table class="table is-narrow">
+            <thead><tr><th>AUROC&uarr;</th><th>DiT</th><th>SiT</th><th>SiT-REPA</th><th>TEM</th></tr></thead>
+            <tbody>
+              <tr><td>iNaturalist</td><td>0.777</td><td>0.733</td><td>0.780</td><td><b>0.904</b></td></tr>
+              <tr><td>Textures</td><td>0.439</td><td>0.426</td><td>0.438</td><td><b>0.687</b></td></tr>
+              <tr><td>Places365</td><td><b>0.669</b></td><td>0.621</td><td>0.481</td><td>0.636</td></tr>
+              <tr><td>SUN</td><td>0.505</td><td>0.513</td><td>0.500</td><td><b>0.640</b></td></tr>
+              <tr class="ours"><td>Average</td><td>0.598</td><td>0.573</td><td>0.549</td><td>0.717</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">More Samples</h2>
+    <div class="gallery" id="gallery"></div>
+    <p class="figure-caption has-text-centered">Uncurated class-conditional ImageNet 256&times;256 samples from TEM-XL.</p>
+  </div>
+</section>
 
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code>@article{park2021nerfies,
-  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
-  title     = {Nerfies: Deformable Neural Radiance Fields},
-  journal   = {ICCV},
-  year      = {2021},
+    <pre><code>@article{lee2026tem,
+  author  = {Lee, Jungsoo and Gladstone, Alexi and Du, Yilun},
+  title   = {Scaling Transformer Energy-Based Models for High Quality Image Synthesis},
+  year    = {2026},
 }</code></pre>
   </div>
 </section>
 
-
 <footer class="footer">
   <div class="container">
-    <div class="content has-text-centered">
-      <a class="icon-link"
-         href="./static/videos/nerfies_paper.pdf">
-        <i class="fas fa-file-pdf"></i>
-      </a>
-      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
-        <i class="fab fa-github"></i>
-      </a>
-    </div>
     <div class="columns is-centered">
       <div class="column is-8">
-        <div class="content">
+        <div class="content has-text-centered">
           <p>
             This website is licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-          <p>
-            This means you are free to borrow the <a
-              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
-            we just ask that you link back to this page in the footer.
-            Please remember to remove the analytics code included in the header of the website which
-            you do not want on your website.
+            href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0
+            International License</a>. The template is borrowed from
+            <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
           </p>
         </div>
       </div>
     </div>
   </div>
 </footer>
+
+<script>
+  (function () {
+    // Sample gallery.
+    var classes = ['0007', '0012', '0017', '0051', '0068', '0109', '0113', '0135', '0207', '0308', '0324', '0331',
+                   '0337', '0390', '0397', '0524', '0649', '0672', '0679', '0730', '0825', '0931', '0937', '0939'];
+    var gallery = document.getElementById('gallery');
+    classes.forEach(function (c) {
+      var im = document.createElement('img');
+      im.src = './static/images/tem/samples/class_' + c + '.png';
+      im.alt = 'ImageNet class ' + parseInt(c, 10) + ' sample';
+      im.loading = 'lazy';
+      gallery.appendChild(im);
+    });
+  })();
+</script>
 
 </body>
 </html>

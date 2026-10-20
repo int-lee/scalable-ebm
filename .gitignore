@@ -1,2 +1,6 @@
 .DS_store
 .idea
+
+# Paper source (separate git repo) and its archive
+paper_src/
+Scalable_EBM_ICLR2027.zip
