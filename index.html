@@ -61,6 +61,26 @@
     .head-sum-op { display: flex; flex-direction: column; align-items: center; color: #888; font-size: 1.3rem; }
     .head-sum img { box-shadow: 0 0 0 3px #f6c453; }
 
+    /* Collapsible abstract */
+    .abstract-box { text-align: left; border: 1px solid #dbdbdb; border-radius: 8px; background: #fff; }
+    .abstract-box summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 0.6rem;
+                            padding: 0.9rem 1.2rem; user-select: none; }
+    .abstract-box summary::-webkit-details-marker { display: none; }
+    .abstract-box summary::before { content: '\25B8'; font-size: 1.1rem; color: #2b6cb0; transition: transform 0.2s; }
+    .abstract-box[open] summary::before { transform: rotate(90deg); }
+    .abstract-box summary .title { margin: 0; }
+    .abstract-box summary:hover { background: #f7f9fc; border-radius: 8px; }
+    .abstract-hint { margin-left: auto; font-size: 0.85rem; color: #888; }
+    .abstract-box[open] .abstract-hint { display: none; }
+    .abstract-box .content { padding: 0 1.2rem 0.4rem; }
+
+    /* TL;DR + abstract video */
+    .tldr { text-align: left; background: #f3f7fd; border-left: 4px solid #2b6cb0; border-radius: 6px;
+            padding: 0.9rem 1.2rem; margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.6; }
+    .tldr-label { font-family: 'Google Sans', sans-serif; font-weight: 700; color: #2b6cb0; margin-right: 0.4rem; }
+    .abstract-video { margin-top: 1.75rem; }
+    .abstract-video video { width: 100%; display: block; border-radius: 8px; border: 1px solid #e5e5e5; }
+
     /* Sampling GIFs */
     .refine-gifs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 1400px; margin: 0 auto; }
     .refine-gifs img { width: 100%; display: block; border-radius: 6px; background: #fff; }
@@ -192,8 +212,15 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
+        <div class="tldr">
+          <span class="tldr-label">TL;DR</span>
+          We scale <b>contrastively trained energy-based models</b> to high-resolution ImageNet with a transformer energy
+          function, reaching <b>FID 3.82</b> (256&times;256) and <b>8.24</b> (512&times;512) without guidance, while
+          keeping what makes EBMs special: composition, inpainting, OOD detection, and inference-time scaling.
+        </div>
+        <details class="abstract-box">
+          <summary><span class="title is-4">Abstract</span><span class="abstract-hint">click to expand</span></summary>
+          <div class="content has-text-justified">
           <p>
             Energy-Based Models (EBMs) are a flexible class of generative models that decouple probabilistic modeling
             from the generation process. This decoupling directly enables compositional generation and inference-time
@@ -215,6 +242,17 @@
             512&times;512, TEM achieves an FID-50K of <b>8.24</b>, demonstrating that the approach scales to higher
             resolution. We further validate the core promises of EBMs: compositional generation, zero-shot inpainting,
             and out-of-distribution detection.
+          </p>
+          </div>
+        </details>
+        <div class="abstract-video">
+          <video autoplay muted loop playsinline preload="auto">
+            <source src="./static/videos/tem_sampling_training.mp4" type="video/mp4">
+          </video>
+          <p class="figure-caption has-text-centered">
+            <b>EBM vs. diffusion/flow.</b> TEM is trained with a contrastive loss that pushes real data $x^+$ down and
+            MCMC samples $x^-$ up, then samples by searching the learned energy landscape. Diffusion and flow models
+            instead learn each step of a fixed denoising procedure.
           </p>
         </div>
       </div>
