@@ -74,12 +74,25 @@
     .abstract-box[open] .abstract-hint { display: none; }
     .abstract-box .content { padding: 0 1.2rem 0.4rem; }
 
-    /* TL;DR + abstract video */
+    /* TL;DR box */
     .tldr { text-align: left; background: #f3f7fd; border-left: 4px solid #2b6cb0; border-radius: 6px;
-            padding: 0.9rem 1.2rem; margin-bottom: 2rem; font-size: 1.05rem; line-height: 1.6; }
+            padding: 0.9rem 1rem; margin-bottom: 1.5rem; font-size: 1.18rem; line-height: 1.5; }
     .tldr-label { font-family: 'Google Sans', sans-serif; font-weight: 700; color: #2b6cb0; margin-right: 0.4rem; }
+
+    /* Abstract video */
     .abstract-video { margin-top: 1.75rem; }
     .abstract-video video { width: 100%; display: block; border-radius: 8px; border: 1px solid #e5e5e5; }
+
+    /* OOD diagram */
+    .ood-diagram { width: 100%; height: auto; display: block; }
+    .ood-diagram text { font-family: 'Google Sans', 'Noto Sans', sans-serif; }
+    .ood-t-id { font-size: 17px; font-weight: 700; fill: #1f7a45; }
+    .ood-t-sub { font-size: 13px; fill: #4d8a64; }
+    .ood-t-e { font-size: 17px; font-weight: 700; }
+    .ood-low { fill: #1f7a45; }
+    .ood-high { fill: #b52e2e; }
+    .ood-t-cap { font-size: 12.5px; fill: #666; }
+    .ood-link { stroke: #999; stroke-width: 1.5; stroke-dasharray: 4 4; }
 
     /* Sampling GIFs */
     .refine-gifs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 1400px; margin: 0 auto; }
@@ -122,8 +135,8 @@
           <h1 class="title is-1 publication-title">Scaling Transformer Energy-Based Models for High Quality Image Synthesis</h1>
           <div class="is-size-5 publication-authors">
             <span class="author-block">Jungsoo Lee<sup>1</sup>,</span>
-            <span class="author-block">Alexi Gladstone<sup>2</sup>,</span>
-            <span class="author-block">Yilun Du<sup>3</sup></span>
+            <span class="author-block"><a href="https://alexiglad.github.io/">Alexi Gladstone</a><sup>2</sup>,</span>
+            <span class="author-block"><a href="https://yilundu.github.io/">Yilun Du</a><sup>3</sup></span>
           </div>
 
           <div class="is-size-5 publication-authors">
@@ -165,6 +178,12 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
+      <div class="tldr">
+        <span class="tldr-label">TL;DR</span>
+        We scale <b>contrastively trained energy-based models</b> to high-resolution ImageNet with a transformer energy
+        function, reaching <b>FID 3.82</b> (256&times;256) and <b>8.24</b> (512&times;512) without guidance, while
+        keeping EBMs' special properties: composition, inpainting, OOD detection, and inference-time scaling.
+      </div>
       <div class="columns is-vcentered">
         <div class="column is-two-thirds">
           <div class="teaser-grid">
@@ -193,11 +212,6 @@
           </div>
         </div>
       </div>
-      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
-        <span class="dnerf">TEM</span> is a contrastively trained energy-based model that generates
-        high-fidelity ImageNet 256&times;256 and 512&times;512 images from pure noise,
-        and composes concepts simply by adding energies.
-      </h2>
       <p class="figure-caption">
         <b>Left:</b> uncurated class-conditional samples from TEM-XL/2 (80 sampling steps). The two large images are
         512&times;512; the rest are 256&times;256. <b>Right:</b> summing the energy functions of two independent classes
@@ -212,12 +226,6 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
-        <div class="tldr">
-          <span class="tldr-label">TL;DR</span>
-          We scale <b>contrastively trained energy-based models</b> to high-resolution ImageNet with a transformer energy
-          function, reaching <b>FID 3.82</b> (256&times;256) and <b>8.24</b> (512&times;512) without guidance, while
-          keeping what makes EBMs special: composition, inpainting, OOD detection, and inference-time scaling.
-        </div>
         <details class="abstract-box">
           <summary><span class="title is-4">Abstract</span><span class="abstract-hint">click to expand</span></summary>
           <div class="content has-text-justified">
@@ -247,12 +255,12 @@
         </details>
         <div class="abstract-video">
           <video autoplay muted loop playsinline preload="auto">
-            <source src="./static/videos/tem_sampling_training.mp4" type="video/mp4">
+            <source src="./static/videos/tem_ebm_training_sampling.mp4" type="video/mp4">
           </video>
           <p class="figure-caption has-text-centered">
-            <b>EBM vs. diffusion/flow.</b> TEM is trained with a contrastive loss that pushes real data $x^+$ down and
-            MCMC samples $x^-$ up, then samples by searching the learned energy landscape. Diffusion and flow models
-            instead learn each step of a fixed denoising procedure.
+            <b>How TEM trains and samples.</b> During training, MCMC samples $x^-$ are drawn with Langevin dynamics
+            and the energy is pushed down on real data $x^+$ and up on $x^-$. At inference, Langevin sampling on the
+            trained energy descends the landscape and lands on the real data.
           </p>
         </div>
       </div>
@@ -275,6 +283,194 @@
       <i>Right:</i> TEM-XL against DiT-XL, SiT-XL and SiT-XL+REPA: TEM scales more steeply and reaches a lower
       unguided FID with less training compute.
     </p>
+  </div>
+</section>
+
+<!-- Inference-time scaling -->
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-3 has-text-centered">Inference-Time Scaling</h2>
+      <div class="refine-gifs">
+        <img src="./static/images/tem/refine_snail.gif" alt="Snail sample refining over 120 sampling steps, with its energy curve">
+        <img src="./static/images/tem/refine_lemon.gif" alt="Lemon sample refining over 120 sampling steps, with its energy curve">
+      </div>
+      <p class="figure-caption has-text-centered">
+        Energy decreases steadily as sampling proceeds. At the training horizon (40 steps) coarse structure is
+        established but residual noise remains; continuing past it produces increasingly sharp, class-typical images.
+      </p>
+    </div>
+    <div class="container is-max-desktop" style="margin-top: 2rem;">
+      <h3 class="title is-4">Fidelity&ndash;diversity trade-off</h3>
+      <div class="columns is-vcentered">
+        <div class="column is-7">
+          <img src="./static/images/tem/fid_is_tradeoff_new.png" alt="FID vs IS trade-off">
+        </div>
+        <div class="column">
+          <div class="results-table">
+            <table class="table is-narrow">
+              <thead><tr><th>Model</th><th>Steps</th><th>FID&darr;</th><th>IS&uarr;</th><th>Prec.</th><th>Rec.</th></tr></thead>
+              <tbody>
+                <tr><td>TEM-XL</td><td>40</td><td>7.63</td><td>106.0</td><td>0.65</td><td>0.65</td></tr>
+                <tr class="ours"><td>TEM-XL</td><td>60</td><td>3.82</td><td>176.2</td><td>0.76</td><td>0.57</td></tr>
+                <tr><td>TEM-XL</td><td>80</td><td>4.72</td><td>221.1</td><td>0.81</td><td>0.51</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <p class="figure-caption">
+        FID-50K vs. Inception Score for TEM-XL when increasing the number of sampling steps (blue) or the step size
+        (green) from the training configuration ($T=40$, $\eta=500$). A moderate increase improves both metrics; beyond
+        that, IS keeps rising while FID degrades. This mirrors the trade-off controlled by classifier-free guidance, from
+        a single network with no retraining.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Compositional generation -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Compositional Generation</h2>
+    <div class="content has-text-justified">
+      <p>
+        For two energy-defined distributions, the product $p_1(x)p_2(x) \propto \exp(-(E_1(x)+E_2(x)))$. Sampling with
+        the summed energy gives images that satisfy both concepts at once.
+      </p>
+    </div>
+    <div class="img-row cols-4">
+      <figure><img src="./static/images/tem/comp/shark+carmirror.png" alt="white shark + car mirror"><figcaption>white shark + car mirror</figcaption></figure>
+      <figure><img src="./static/images/tem/comp/bordercollie+rapeseed.png" alt="border collie + rapeseed"><figcaption>border collie + rapeseed</figcaption></figure>
+      <figure><img src="./static/images/tem/comp/Petridish+strawberry.png" alt="strawberry + petri dish"><figcaption>strawberry + petri dish</figcaption></figure>
+      <figure><img src="./static/images/tem/comp/lemon+fountain.png" alt="lemon + fountain"><figcaption>lemon + fountain</figcaption></figure>
+    </div>
+
+    <div class="columns is-centered is-vcentered" style="margin-top: 2rem;">
+      <div class="column is-5">
+        <div class="img-row cols-3">
+          <img src="./static/images/tem/clevr/image_040_origin.png" alt="CLEVR condition">
+          <img src="./static/images/tem/clevr/image_021_origin.png" alt="CLEVR condition">
+          <img src="./static/images/tem/clevr/image_086_origin.png" alt="CLEVR condition">
+          <img src="./static/images/tem/clevr/image_040.png" alt="CLEVR TEM sample">
+          <img src="./static/images/tem/clevr/image_021.png" alt="CLEVR TEM sample">
+          <img src="./static/images/tem/clevr/image_086.png" alt="CLEVR TEM sample">
+        </div>
+      </div>
+      <div class="column">
+        <div class="results-table">
+          <table class="table is-narrow">
+            <thead><tr><th>Model</th><th>1 obj.</th><th>2 obj.</th><th>3 obj.</th></tr></thead>
+            <tbody>
+              <tr><td>Comp. Diffusion</td><td>0.863</td><td>0.598</td><td>0.262</td></tr>
+              <tr class="ours"><td>TEM (ours)</td><td>0.956</td><td>0.766</td><td>0.274</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <b>CLEVR 256&times;256 compositional generation.</b> <i>Top row:</i> conditioning inputs; yellow boxes are the
+      specified object positions. <i>Bottom row:</i> TEM-B samples; green boxes mark detected objects. <i>Table:</i>
+      object detection success rate (&uarr;) over 1,000 scenes, compared with Composable Diffusion.
+    </p>
+  </div>
+</section>
+
+<!-- OOD detection -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Out-of-Distribution Detection</h2>
+    <div class="content has-text-justified">
+      <p>
+        An EBM scores inputs directly: in-distribution data sits in the low-energy basin, while unfamiliar inputs land at
+        high energy. A single forward pass of the unconditional energy $E_\theta(x)$ gives an OOD score, with no
+        task-specific training, labels, or calibration. Diffusion baselines are scored by their denoising residual with
+        one network evaluation. SiT+REPA receives the same DINOv2 alignment yet scores close to SiT, so alignment alone
+        does not explain the gap: the scalar energy does.
+      </p>
+    </div>
+    <div class="columns is-vcentered">
+      <div class="column is-7">
+        <svg class="ood-diagram" viewBox="0 0 640 330" role="img"
+             aria-label="A sample inside the green in-distribution region has low energy (0.03); a sample just outside it is out-of-distribution with high energy (0.17).">
+          <defs>
+            <clipPath id="ood-clip-id"><rect x="18" y="168" width="118" height="118" rx="8"/></clipPath>
+            <clipPath id="ood-clip-ood"><rect x="500" y="22" width="118" height="118" rx="8"/></clipPath>
+          </defs>
+          <!-- in-distribution region -->
+          <ellipse cx="270" cy="165" rx="112" ry="72" fill="#e4f5ea" stroke="#2e9e5b" stroke-width="2.5"/>
+          <text x="270" y="122" text-anchor="middle" class="ood-t-id">In-distribution</text>
+          <text x="270" y="140" text-anchor="middle" class="ood-t-sub">(ImageNet)</text>
+          <!-- links -->
+          <line x1="250" y1="190" x2="136" y2="222" class="ood-link"/>
+          <line x1="402" y1="128" x2="500" y2="90" class="ood-link"/>
+          <!-- samples -->
+          <circle cx="250" cy="190" r="9" fill="#2e9e5b" stroke="#fff" stroke-width="2"/>
+          <circle cx="402" cy="128" r="9" fill="#d03b3b" stroke="#fff" stroke-width="2"/>
+          <!-- ID image card -->
+          <image href="./static/images/tem/ood/id_sample.jpg" x="18" y="168" width="118" height="118"
+                 preserveAspectRatio="xMidYMid slice" clip-path="url(#ood-clip-id)"/>
+          <rect x="18" y="168" width="118" height="118" rx="8" fill="none" stroke="#2e9e5b" stroke-width="3"/>
+          <text x="77" y="306" text-anchor="middle" class="ood-t-e ood-low">E = 0.03</text>
+          <text x="77" y="324" text-anchor="middle" class="ood-t-cap">in-distribution &middot; low</text>
+          <!-- OOD image card -->
+          <image href="./static/images/tem/ood/ood_sample.jpg" x="500" y="22" width="118" height="118"
+                 preserveAspectRatio="xMidYMid slice" clip-path="url(#ood-clip-ood)"/>
+          <rect x="500" y="22" width="118" height="118" rx="8" fill="none" stroke="#d03b3b" stroke-width="3"/>
+          <text x="559" y="160" text-anchor="middle" class="ood-t-e ood-high">E = 0.17</text>
+          <text x="559" y="178" text-anchor="middle" class="ood-t-cap">out-of-distribution &middot; high</text>
+        </svg>
+      </div>
+      <div class="column">
+        <div class="results-table">
+          <table class="table is-narrow">
+            <thead><tr><th>AUROC&uarr;</th><th>DiT</th><th>SiT</th><th>SiT-REPA</th><th>TEM</th></tr></thead>
+            <tbody>
+              <tr><td>iNaturalist</td><td>0.777</td><td>0.733</td><td>0.780</td><td><b>0.904</b></td></tr>
+              <tr><td>Textures</td><td>0.439</td><td>0.426</td><td>0.438</td><td><b>0.687</b></td></tr>
+              <tr><td>Places365</td><td><b>0.669</b></td><td>0.621</td><td>0.481</td><td>0.636</td></tr>
+              <tr><td>SUN</td><td>0.505</td><td>0.513</td><td>0.500</td><td><b>0.640</b></td></tr>
+              <tr class="ours"><td>Average</td><td>0.598</td><td>0.573</td><td>0.549</td><td>0.717</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <p class="figure-caption">
+      <i>Left:</i> a sample inside the in-distribution region gets low energy ($E = 0.03$), while a sample just outside
+      it is flagged as out-of-distribution with high energy ($E = 0.17$); the OOD score is simply $S(x) = -E_\theta(x)$. <i>Right:</i> AUROC (&uarr;) on four OOD benchmarks with
+      ImageNet-1k validation as the in-distribution set.
+    </p>
+  </div>
+</section>
+
+<!-- Inpainting -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Zero-Shot Inpainting</h2>
+    <div class="content has-text-justified">
+      <p>
+        Because TEM defines a single energy over image latents, inpainting is just sampling on the missing region while
+        resetting the observed latents to their encoded values after each step. The image is masked before VAE
+        encoding, so no ground-truth content leaks into the hole.
+      </p>
+    </div>
+    <div class="img-row cols-6">
+      <figure><img src="./static/images/tem/inpaint/In_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask1.png" alt="T=0"><figcaption>$T=0$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask2.png" alt="T=20"><figcaption>$T=20$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask3.png" alt="T=40"><figcaption>$T=40$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask4.png" alt="T=60"><figcaption>$T=60$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/In_mask5.png" alt="T=80"><figcaption>$T=80$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask1.png" alt="T=0"><figcaption>$T=0$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask2.png" alt="T=20"><figcaption>$T=20$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask3.png" alt="T=40"><figcaption>$T=40$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask4.png" alt="T=60"><figcaption>$T=60$</figcaption></figure>
+      <figure><img src="./static/images/tem/inpaint/out_mask5.png" alt="T=80"><figcaption>$T=80$</figcaption></figure>
+    </div>
+    <p class="figure-caption">Inpainting a meerkat (top) and a movie theater (bottom) across sampling steps.</p>
   </div>
 </section>
 
@@ -320,57 +516,6 @@
   </div>
 </section>
 
-<!-- Sampling slider -->
-<section class="hero is-light is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3 has-text-centered">Watch Samples Refine</h2>
-      <div class="refine-gifs">
-        <img src="./static/images/tem/refine_snail.gif" alt="Snail sample refining over 120 sampling steps, with its energy curve">
-        <img src="./static/images/tem/refine_lemon.gif" alt="Lemon sample refining over 120 sampling steps, with its energy curve">
-      </div>
-      <p class="figure-caption has-text-centered">
-        Energy decreases steadily as sampling proceeds. At the training horizon (40 steps) coarse structure is
-        established but residual noise remains; continuing past it produces increasingly sharp, class-typical images.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- Results -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Results on ImageNet</h2>
-
-
-
-    <h3 class="title is-4" style="margin-top: 2.5rem;">Fidelity&ndash;diversity trade-off at inference time</h3>
-    <div class="columns is-vcentered">
-      <div class="column is-7">
-        <img src="./static/images/tem/fid_is_tradeoff_new.png" alt="FID vs IS trade-off">
-      </div>
-      <div class="column">
-        <div class="results-table">
-          <table class="table is-narrow">
-            <thead><tr><th>Model</th><th>Steps</th><th>FID&darr;</th><th>IS&uarr;</th><th>Prec.</th><th>Rec.</th></tr></thead>
-            <tbody>
-              <tr><td>TEM-XL</td><td>40</td><td>7.63</td><td>106.0</td><td>0.65</td><td>0.65</td></tr>
-              <tr class="ours"><td>TEM-XL</td><td>60</td><td>3.82</td><td>176.2</td><td>0.76</td><td>0.57</td></tr>
-              <tr><td>TEM-XL</td><td>80</td><td>4.72</td><td>221.1</td><td>0.81</td><td>0.51</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <p class="figure-caption">
-      FID-50K vs. Inception Score for TEM-XL when increasing the number of sampling steps (blue) or the step size
-      (green) from the training configuration ($T=40$, $\eta=500$). A moderate increase improves both metrics; beyond
-      that, IS keeps rising while FID degrades. This mirrors the trade-off controlled by classifier-free guidance, from
-      a single network with no retraining.
-    </p>
-  </div>
-</section>
-
 <!-- PRA ablation -->
 <section class="section">
   <div class="container is-max-desktop">
@@ -390,106 +535,6 @@
           clean counterpart, both TEM and the VFM see the same clean $x^+$. PRA does not guide any sampling trajectory;
           it shapes the geometry of the low-energy region directly.
         </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Applications -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Applications</h2>
-
-    <h3 class="title is-4">Compositional generation</h3>
-    <div class="content has-text-justified">
-      <p>
-        For two energy-defined distributions, the product $p_1(x)p_2(x) \propto \exp(-(E_1(x)+E_2(x)))$. Sampling with
-        the summed energy gives images that satisfy both concepts at once.
-      </p>
-    </div>
-    <div class="img-row cols-4">
-      <figure><img src="./static/images/tem/comp/shark+carmirror.png" alt="white shark + car mirror"><figcaption>white shark + car mirror</figcaption></figure>
-      <figure><img src="./static/images/tem/comp/bordercollie+rapeseed.png" alt="border collie + rapeseed"><figcaption>border collie + rapeseed</figcaption></figure>
-      <figure><img src="./static/images/tem/comp/Petridish+strawberry.png" alt="strawberry + petri dish"><figcaption>strawberry + petri dish</figcaption></figure>
-      <figure><img src="./static/images/tem/comp/lemon+fountain.png" alt="lemon + fountain"><figcaption>lemon + fountain</figcaption></figure>
-    </div>
-
-    <div class="columns is-centered is-vcentered" style="margin-top: 2rem;">
-      <div class="column is-5">
-        <div class="img-row cols-3">
-          <img src="./static/images/tem/clevr/image_040_origin.png" alt="CLEVR condition">
-          <img src="./static/images/tem/clevr/image_021_origin.png" alt="CLEVR condition">
-          <img src="./static/images/tem/clevr/image_086_origin.png" alt="CLEVR condition">
-          <img src="./static/images/tem/clevr/image_040.png" alt="CLEVR TEM sample">
-          <img src="./static/images/tem/clevr/image_021.png" alt="CLEVR TEM sample">
-          <img src="./static/images/tem/clevr/image_086.png" alt="CLEVR TEM sample">
-        </div>
-      </div>
-      <div class="column">
-        <div class="results-table">
-          <table class="table is-narrow">
-            <thead><tr><th>Model</th><th>1 obj.</th><th>2 obj.</th><th>3 obj.</th></tr></thead>
-            <tbody>
-              <tr><td>Comp. Diffusion</td><td>0.863</td><td>0.598</td><td>0.262</td></tr>
-              <tr class="ours"><td>TEM (ours)</td><td>0.956</td><td>0.766</td><td>0.274</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <p class="figure-caption">
-      <b>CLEVR 256&times;256 compositional generation.</b> <i>Top row:</i> conditioning inputs; yellow boxes are the
-      specified object positions. <i>Bottom row:</i> TEM-B samples; green boxes mark detected objects. <i>Table:</i>
-      object detection success rate (&uarr;) over 1,000 scenes, compared with Composable Diffusion.
-    </p>
-
-    <h3 class="title is-4" style="margin-top: 2.5rem;">Zero-shot inpainting</h3>
-    <div class="content has-text-justified">
-      <p>
-        Because TEM defines a single energy over image latents, inpainting is just sampling on the missing region while
-        resetting the observed latents to their encoded values after each step. The image is masked before VAE
-        encoding, so no ground-truth content leaks into the hole.
-      </p>
-    </div>
-    <div class="img-row cols-6">
-      <figure><img src="./static/images/tem/inpaint/In_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask1.png" alt="T=0"><figcaption>$T=0$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask2.png" alt="T=20"><figcaption>$T=20$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask3.png" alt="T=40"><figcaption>$T=40$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask4.png" alt="T=60"><figcaption>$T=60$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask5.png" alt="T=80"><figcaption>$T=80$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask1.png" alt="T=0"><figcaption>$T=0$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask2.png" alt="T=20"><figcaption>$T=20$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask3.png" alt="T=40"><figcaption>$T=40$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask4.png" alt="T=60"><figcaption>$T=60$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask5.png" alt="T=80"><figcaption>$T=80$</figcaption></figure>
-    </div>
-    <p class="figure-caption">Inpainting a meerkat (top) and a movie theater (bottom) across sampling steps.</p>
-
-    <h3 class="title is-4" style="margin-top: 2.5rem;">Out-of-distribution detection</h3>
-    <div class="columns is-vcentered">
-      <div class="column content">
-        <p>
-          A single forward pass of the unconditional energy $E_\theta(x)$ gives an OOD score, with no task-specific
-          training, labels, or calibration. Diffusion baselines are scored by their denoising residual with one network
-          evaluation. SiT+REPA receives the same DINOv2 alignment yet scores close to SiT, so alignment alone does not
-          explain the gap: the scalar energy does.
-        </p>
-      </div>
-      <div class="column">
-        <div class="results-table">
-          <table class="table is-narrow">
-            <thead><tr><th>AUROC&uarr;</th><th>DiT</th><th>SiT</th><th>SiT-REPA</th><th>TEM</th></tr></thead>
-            <tbody>
-              <tr><td>iNaturalist</td><td>0.777</td><td>0.733</td><td>0.780</td><td><b>0.904</b></td></tr>
-              <tr><td>Textures</td><td>0.439</td><td>0.426</td><td>0.438</td><td><b>0.687</b></td></tr>
-              <tr><td>Places365</td><td><b>0.669</b></td><td>0.621</td><td>0.481</td><td>0.636</td></tr>
-              <tr><td>SUN</td><td>0.505</td><td>0.513</td><td>0.500</td><td><b>0.640</b></td></tr>
-              <tr class="ours"><td>Average</td><td>0.598</td><td>0.573</td><td>0.549</td><td>0.717</td></tr>
-            </tbody>
-          </table>
-        </div>
       </div>
     </div>
   </div>
