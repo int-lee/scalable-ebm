@@ -313,6 +313,8 @@
                                     background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 85%); pointer-events: none; }
     .gal-more { text-align: center; margin-top: 0.6rem; }
     .gal-more[hidden] { display: none !important; }
+    .gal-chev { transition: transform 0.25s; }
+    #gal-more.is-open .gal-chev { transform: rotate(180deg); }
     .gal-sub { margin-bottom: 0.6rem !important; color: #444; }
 
     /* Tables */
@@ -964,8 +966,9 @@
       <div class="gal-veil"></div>
     </div>
     <div class="gal-more">
-      <button type="button" class="button is-rounded is-dark" id="gal-more">
-        <span>See more samples</span><span class="icon is-small"><i class="fas fa-chevron-down"></i></span>
+      <button type="button" class="button is-rounded is-dark" id="gal-more" aria-expanded="false" aria-controls="gal-wrap">
+        <span class="gal-more-t">See more samples</span>
+        <span class="icon is-small"><i class="fas fa-chevron-down gal-chev"></i></span>
       </button>
     </div>
   </div>
@@ -1465,9 +1468,17 @@
       window.addEventListener('resize', peek);
       if (first && !first.complete) first.addEventListener('load', peek);
       btn.addEventListener('click', function () {
-        wrap.classList.remove('collapsed');
-        btn.parentNode.hidden = true;
-        wrap.querySelectorAll('img[loading="lazy"]').forEach(function (im) { im.loading = 'eager'; });
+        var open = wrap.classList.toggle('collapsed') === false;
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.querySelector('.gal-more-t').textContent = open ? 'Show less' : 'See more samples';
+        btn.classList.toggle('is-open', open);
+        if (open) {
+          wrap.querySelectorAll('img[loading="lazy"]').forEach(function (im) { im.loading = 'eager'; });
+        } else {
+          peek();
+          var top = wrap.getBoundingClientRect().top + window.scrollY - 120;   // bring the collapsed gallery back into view
+          if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'smooth' });
+        }
       });
     })();
 
