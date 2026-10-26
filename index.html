@@ -98,9 +98,6 @@
     .ebm-more { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem; }
     .ebm-more .button { font-size: 0.95rem; }
 
-    .author-contact { color: #666; margin-top: 0.3rem; display: flex; justify-content: center; align-items: center; gap: 0.3rem; line-height: 1; }
-    .author-contact .icon { height: 1em; width: 1.1em; }
-    .author-contact .icon svg, .author-contact .icon i { height: 0.95em; vertical-align: 0; }
 
     .method-box { border: 1px solid #dfe4ec; border-radius: 12px; padding: 1.4rem 1.5rem 1.2rem; background: #fcfdff; }
     .method-sub { margin-bottom: 1rem !important; }
@@ -127,15 +124,19 @@
     .c-out { width: 62%; margin: 0 auto !important; }
     .c-out-box { position: relative; aspect-ratio: 1 / 1; border-radius: 8px; border: 2px dashed #b9c4d3; background: #fff;
                  overflow: hidden; display: flex; align-items: center; justify-content: center; }
-    .c-out-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-                     opacity: 0; transform: scale(0.96); filter: blur(10px); transition: opacity 0.6s, transform 0.6s, filter 0.8s; }
+    .c-out-box img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    #c-noise { opacity: 0; transition: opacity 1.4s ease-in-out; }
+    .c-out-box.noise #c-noise { opacity: 1; transition: opacity 0.3s; }
+    #c-out:not([src]) { display: none; }
+    #c-out { opacity: 0; filter: blur(14px); transition: opacity 1.4s ease-in-out, filter 1.6s ease-out; }
+    .c-out-box.morph #c-out, .c-out-box.done #c-out { opacity: 1; filter: none; }
+    .c-tag { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 2; display: none;
+             background: rgba(0, 0, 0, 0.6); color: #fff; font-size: 0.78rem; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+    .c-out-box.noise .c-tag, .c-out-box.morph .c-tag { display: block; }
+    .c-out-box.noise .c-placeholder, .c-out-box.morph .c-placeholder { display: none; }
     .c-out-box.done { border: 2px solid #f6c453; }
-    .c-out-box.done img { opacity: 1; transform: none; filter: none; }
     .c-placeholder { font-size: 3rem; color: #c3ccd8; font-family: 'Google Sans', sans-serif; }
-    .c-sampling { display: none; font-size: 0.9rem; color: #2b6cb0; font-weight: 600; }
-    .c-out-box.busy .c-placeholder { display: none; }
-    .c-out-box.busy .c-sampling { display: block; animation: c-pulse 0.8s ease-in-out infinite alternate; }
-    .c-out-box.done .c-placeholder, .c-out-box.done .c-sampling { display: none; }
+    .c-out-box.done .c-placeholder { display: none; }
     @keyframes c-pulse { from { opacity: 0.35; } to { opacity: 1; } }
 
     /* Energy-addition plot */
@@ -165,6 +166,7 @@
     .ev-note { font-size: 0.85rem; color: #555; text-align: center; margin: 0.2rem 0 0.3rem; }
 
     /* Animated CLEVR position composition */
+    .results-table.cd-table table { font-size: 1.1rem; }
     .cd-grid { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 4px; }
     .cd-row-label { writing-mode: vertical-rl; transform: rotate(180deg); display: flex; flex-direction: column;
                     align-items: center; justify-content: center; gap: 2px; padding: 0 2px; line-height: 1.15; }
@@ -285,6 +287,10 @@
     .rv-plot text { font-family: 'Google Sans', 'Noto Sans', sans-serif; }
     .rv-title { font-family: 'Google Sans', sans-serif; font-size: 1.05rem; color: #333; text-align: center; margin-bottom: 0.5rem; }
     .rv-control { margin-top: 0.9rem; }
+    .rv-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.2rem 1.2rem; font-size: 0.85rem;
+                 color: #333; margin: -0.2rem 0 0.4rem; font-variant-numeric: tabular-nums; }
+    .rv-leg-item { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .rv-leg-item i { display: inline-block; width: 22px; height: 0; }
     .rv-hint { text-align: center; font-family: 'Google Sans', sans-serif; font-size: 1.1rem; color: #4a5aa8;
                font-weight: 600; margin-bottom: 0.8rem; }
     .rv-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 999px; cursor: pointer;
@@ -334,7 +340,7 @@
         <div class="column has-text-centered">
           <h1 class="title is-1 publication-title">Scaling Transformer Energy-Based Models for High Quality Image Synthesis</h1>
           <div class="is-size-5 publication-authors">
-            <span class="author-block">Jungsoo Lee<sup>1</sup>,</span>
+            <span class="author-block"><a href="mailto:bus6479@mit.edu">Jungsoo Lee</a><sup>1</sup>,</span>
             <span class="author-block"><a href="https://alexiglad.github.io/">Alexi Gladstone</a><sup>2</sup>,</span>
             <span class="author-block"><a href="https://yilundu.github.io/">Yilun Du</a><sup>3</sup></span>
           </div>
@@ -343,9 +349,6 @@
             <span class="author-block"><sup>1</sup>MIT,</span>
             <span class="author-block"><sup>2</sup>UIUC,</span>
             <span class="author-block"><sup>3</sup>Harvard University</span>
-          </div>
-          <div class="is-size-6 publication-authors author-contact">
-            <sup>1</sup><span class="icon is-small" aria-label="Email"><i class="fas fa-envelope"></i></span><a href="mailto:bus6479@mit.edu">bus6479@mit.edu</a>
           </div>
 
           <div class="column has-text-centered">
@@ -518,6 +521,31 @@
         at the training horizon (40 steps) coarse structure is established but residual noise remains, and continuing
         past it produces increasingly sharp, class-typical images.
       </p>
+      <h3 class="title is-4 has-text-centered" style="margin-top: 2.5rem;">Starting from another class&rsquo;s image</h3>
+      <p class="rv-hint">&harr; Drag a slider: the chain starts from an image of A and moves on B&rsquo;s energy landscape only.</p>
+      <div class="refine-viewers cond-viewers">
+        <div class="rv" data-name="daisy_monarch" data-label="daisy → monarch">
+          <div class="rv-title"></div>
+          <svg class="rv-plot" viewBox="0 0 672 290" role="img"
+               aria-label="Energy of the sample under the monarch label and under the daisy label over 80 sampling steps, and the sample at the selected step"></svg>
+          <div class="rv-control">
+            <input type="range" class="rv-slider" min="0" max="80" step="1" value="0" aria-label="Sampling step for daisy → monarch">
+          </div>
+        </div>
+        <div class="rv" data-name="zebra_sportscar" data-label="zebra → sports car">
+          <div class="rv-title"></div>
+          <svg class="rv-plot" viewBox="0 0 672 290" role="img"
+               aria-label="Energy of the sample under the sports car label and under the zebra label over 80 sampling steps, and the sample at the selected step"></svg>
+          <div class="rv-control">
+            <input type="range" class="rv-slider" min="0" max="80" step="1" value="0" aria-label="Sampling step for zebra → sports car">
+          </div>
+        </div>
+      </div>
+      <p class="figure-caption has-text-centered">
+        Each chain starts from an image of the source class (step 0) and runs 80 Langevin steps following
+        <b>only the target class&rsquo;s energy gradient</b>. The source energy (dashed) is never optimized, only
+        measured: it rises purely as a side effect as the image leaves the source basin and settles into the target one.
+      </p>
     </div>
   </div>
 </section>
@@ -543,9 +571,10 @@
           </div>
           <figure class="c-out">
             <div class="c-out-box" id="c-out-box">
+              <img id="c-noise" src="./static/images/tem/refine/lemon/step_000.jpg" alt="pure Gaussian noise (sampling start)">
               <img id="c-out" alt="">
               <span class="c-placeholder" id="c-placeholder">?</span>
-              <span class="c-sampling" id="c-sampling">sampling&hellip;</span>
+              <span class="c-tag" id="c-tag"></span>
             </div>
             <figcaption id="c-out-label">composed result</figcaption>
           </figure>
@@ -582,7 +611,7 @@
     <div class="columns is-centered is-vcentered" style="margin-top: 2rem;" id="clevr-demo">
       <div class="column is-5">
         <div class="cd-grid">
-          <div></div><div class="cd-col-label">1 obj.</div><div class="cd-col-label">2 obj.</div><div class="cd-col-label">3 obj.</div>
+          <div></div><div class="cd-col-label">1 object</div><div class="cd-col-label">2 objects</div><div class="cd-col-label">3 objects</div>
           <div class="cd-row-label cd-row-data"><b>Dataset</b><span>yellow = object location</span></div>
           <figure class="cd-panel" data-scene="1obj_040" data-row="condition"><img src="./static/images/tem/clevr/scenes/1obj_040/condition.png" alt="CLEVR scene, 1 conditioned position"><svg viewBox="0 0 256 256" aria-hidden="true"></svg></figure>
           <figure class="cd-panel" data-scene="2obj_021" data-row="condition"><img src="./static/images/tem/clevr/scenes/2obj_021/condition.png" alt="CLEVR scene, 2 conditioned positions"><svg viewBox="0 0 256 256" aria-hidden="true"></svg></figure>
@@ -594,9 +623,9 @@
         </div>
       </div>
       <div class="column">
-        <div class="results-table">
+        <div class="results-table cd-table">
           <table class="table is-narrow">
-            <thead><tr><th>Model</th><th>1 obj.</th><th>2 obj.</th><th>3 obj.</th></tr></thead>
+            <thead><tr><th>Model</th><th>1 object</th><th>2 objects</th><th>3 objects</th></tr></thead>
             <tbody>
               <tr><td>Comp. Diffusion</td><td>0.863</td><td>0.598</td><td>0.262</td></tr>
               <tr class="ours"><td>TEM (ours)</td><td>0.956</td><td>0.766</td><td>0.274</td></tr>
@@ -1009,12 +1038,19 @@
       evAnim = requestAnimationFrame(step);
     }
 
-    // Sampling trajectory viewers: slider over the 121 saved frames, with the per-step total energy.
-    var RV_ENERGY = {
-      snail: [0.1366, 0.06464, 0.05731, 0.05273, 0.048, 0.04434, 0.0416, 0.03918, 0.03766, 0.0361, 0.03491, 0.03351, 0.03229, 0.03116, 0.03027, 0.02933, 0.02817, 0.02734, 0.02689, 0.02631, 0.02564, 0.02524, 0.02496, 0.02448, 0.02353, 0.02277, 0.02211, 0.02156, 0.02112, 0.02036, 0.01999, 0.01956, 0.01901, 0.01852, 0.01765, 0.01704, 0.01662, 0.01627, 0.01591, 0.01527, 0.01484, 0.01436, 0.0135, 0.0127, 0.01218, 0.01174, 0.01093, 0.01043, 0.00942, 0.00887, 0.0081, 0.00755, 0.00654, 0.00579, 0.00508, 0.00426, 0.00371, 0.00286, 0.00242, 0.00192, 0.00122, 0.00079, 0.00017, -0.00033, -0.00105, -0.00188, -0.00293, -0.0036, -0.00443, -0.00502, -0.00542, -0.0061, -0.00667, -0.00726, -0.00772, -0.00812, -0.0085, -0.00896, -0.00952, -0.00987, -0.01044, -0.01108, -0.01125, -0.01183, -0.01199, -0.01236, -0.0127, -0.01292, -0.01346, -0.01398, -0.01436, -0.01482, -0.01539, -0.01571, -0.0162, -0.01671, -0.01682, -0.01715, -0.01736, -0.018, -0.01837, -0.01865, -0.01874, -0.0193, -0.01945, -0.01965, -0.02006, -0.02019, -0.02039, -0.02083, -0.02095, -0.02122, -0.02154, -0.0218, -0.02226, -0.02234, -0.02285, -0.02307, -0.02366, -0.02353, -0.0247],
-      lemon: [0.1731, 0.13062, 0.12402, 0.11914, 0.11597, 0.11328, 0.11011, 0.10742, 0.10547, 0.10327, 0.10095, 0.09888, 0.09705, 0.09534, 0.09314, 0.09131, 0.08936, 0.08826, 0.0863, 0.08496, 0.08337, 0.08228, 0.08057, 0.0791, 0.07825, 0.07703, 0.07593, 0.07483, 0.07336, 0.07202, 0.07068, 0.06958, 0.06824, 0.06714, 0.06641, 0.06531, 0.06396, 0.06311, 0.06189, 0.06067, 0.05957, 0.05847, 0.05749, 0.05652, 0.05542, 0.05469, 0.05359, 0.05249, 0.05164, 0.05078, 0.04981, 0.04919, 0.04858, 0.04761, 0.04681, 0.04584, 0.04504, 0.04431, 0.04352, 0.04248, 0.04193, 0.04089, 0.04022, 0.03961, 0.03906, 0.03851, 0.0376, 0.03711, 0.03626, 0.03571, 0.03503, 0.03436, 0.03388, 0.03302, 0.03229, 0.03149, 0.03058, 0.02966, 0.02875, 0.02789, 0.02722, 0.02661, 0.02582, 0.02515, 0.02445, 0.02365, 0.02283, 0.02212, 0.02124, 0.02032, 0.01944, 0.01874, 0.01788, 0.01694, 0.0163, 0.01541, 0.01456, 0.01349, 0.01283, 0.01179, 0.01073, 0.00996, 0.00903, 0.00812, 0.00734, 0.00643, 0.00558, 0.00487, 0.00398, 0.003, 0.00203, 0.00139, 0.00087, -8e-05, -0.00115, -0.00184, -0.0026, -0.00367, -0.00441, -0.00514, -0.00637]
+    // Sampling trajectory viewers: a slider over saved frames, with per-step energy curve(s).
+    var RV_CFG = {
+      snail: { dir: './static/images/tem/refine/', train40: true, clipFirst: true,
+               curves: [{ label: 'E', color: '#4a5aa8', vals: [0.1366, 0.06464, 0.05731, 0.05273, 0.048, 0.04434, 0.0416, 0.03918, 0.03766, 0.0361, 0.03491, 0.03351, 0.03229, 0.03116, 0.03027, 0.02933, 0.02817, 0.02734, 0.02689, 0.02631, 0.02564, 0.02524, 0.02496, 0.02448, 0.02353, 0.02277, 0.02211, 0.02156, 0.02112, 0.02036, 0.01999, 0.01956, 0.01901, 0.01852, 0.01765, 0.01704, 0.01662, 0.01627, 0.01591, 0.01527, 0.01484, 0.01436, 0.0135, 0.0127, 0.01218, 0.01174, 0.01093, 0.01043, 0.00942, 0.00887, 0.0081, 0.00755, 0.00654, 0.00579, 0.00508, 0.00426, 0.00371, 0.00286, 0.00242, 0.00192, 0.00122, 0.00079, 0.00017, -0.00033, -0.00105, -0.00188, -0.00293, -0.0036, -0.00443, -0.00502, -0.00542, -0.0061, -0.00667, -0.00726, -0.00772, -0.00812, -0.0085, -0.00896, -0.00952, -0.00987, -0.01044, -0.01108, -0.01125, -0.01183, -0.01199, -0.01236, -0.0127, -0.01292, -0.01346, -0.01398, -0.01436, -0.01482, -0.01539, -0.01571, -0.0162, -0.01671, -0.01682, -0.01715, -0.01736, -0.018, -0.01837, -0.01865, -0.01874, -0.0193, -0.01945, -0.01965, -0.02006, -0.02019, -0.02039, -0.02083, -0.02095, -0.02122, -0.02154, -0.0218, -0.02226, -0.02234, -0.02285, -0.02307, -0.02366, -0.02353, -0.0247] }] },
+      lemon: { dir: './static/images/tem/refine/', train40: true, clipFirst: true,
+               curves: [{ label: 'E', color: '#4a5aa8', vals: [0.1731, 0.13062, 0.12402, 0.11914, 0.11597, 0.11328, 0.11011, 0.10742, 0.10547, 0.10327, 0.10095, 0.09888, 0.09705, 0.09534, 0.09314, 0.09131, 0.08936, 0.08826, 0.0863, 0.08496, 0.08337, 0.08228, 0.08057, 0.0791, 0.07825, 0.07703, 0.07593, 0.07483, 0.07336, 0.07202, 0.07068, 0.06958, 0.06824, 0.06714, 0.06641, 0.06531, 0.06396, 0.06311, 0.06189, 0.06067, 0.05957, 0.05847, 0.05749, 0.05652, 0.05542, 0.05469, 0.05359, 0.05249, 0.05164, 0.05078, 0.04981, 0.04919, 0.04858, 0.04761, 0.04681, 0.04584, 0.04504, 0.04431, 0.04352, 0.04248, 0.04193, 0.04089, 0.04022, 0.03961, 0.03906, 0.03851, 0.0376, 0.03711, 0.03626, 0.03571, 0.03503, 0.03436, 0.03388, 0.03302, 0.03229, 0.03149, 0.03058, 0.02966, 0.02875, 0.02789, 0.02722, 0.02661, 0.02582, 0.02515, 0.02445, 0.02365, 0.02283, 0.02212, 0.02124, 0.02032, 0.01944, 0.01874, 0.01788, 0.01694, 0.0163, 0.01541, 0.01456, 0.01349, 0.01283, 0.01179, 0.01073, 0.00996, 0.00903, 0.00812, 0.00734, 0.00643, 0.00558, 0.00487, 0.00398, 0.003, 0.00203, 0.00139, 0.00087, -8e-05, -0.00115, -0.00184, -0.0026, -0.00367, -0.00441, -0.00514, -0.00637] }] },
+      daisy_monarch: { dir: './static/images/tem/cond/', train40: false, clipFirst: false,
+               curves: [{ label: 'gradient followed: E(x | monarch)', color: '#4a5aa8', vals: [0.03839, 0.03381, 0.02978, 0.02655, 0.02289, 0.01837, 0.01053, 0.00322, -0.00456, -0.01129, -0.0173, -0.02304, -0.02786, -0.0321, -0.03614, -0.03987, -0.04365, -0.04764, -0.05121, -0.05579, -0.06012, -0.06409, -0.06757, -0.07111, -0.07373, -0.07654, -0.07898, -0.08044, -0.08325, -0.08569, -0.0874, -0.0896, -0.09143, -0.09314, -0.09473, -0.09607, -0.09753, -0.09888, -0.10022, -0.10156, -0.10217, -0.10376, -0.10413, -0.10547, -0.10632, -0.1073, -0.10754, -0.10877, -0.10938, -0.10986, -0.11035, -0.11121, -0.11157, -0.11231, -0.11267, -0.11353, -0.11401, -0.11475, -0.11523, -0.11572, -0.11646, -0.11621, -0.1167, -0.11719, -0.11768, -0.11841, -0.11865, -0.1189, -0.11939, -0.12012, -0.12085, -0.12085, -0.12134, -0.12158, -0.12134, -0.12207, -0.12231, -0.12329, -0.12354, -0.12378, -0.12476] },
+                        { label: 'only measured: E(x | daisy)', color: '#e08a2e', dashed: true, vals: [-0.07513, -0.07519, -0.07519, -0.07465, -0.07434, -0.07349, -0.07165, -0.06879, -0.06702, -0.06482, -0.06274, -0.06103, -0.0589, -0.0578, -0.05457, -0.05347, -0.05164, -0.04983, -0.04755, -0.04428, -0.0416, -0.03818, -0.03416, -0.03055, -0.02873, -0.02614, -0.0244, -0.01645, -0.01489, -0.01382, -0.01257, -0.01205, -0.01086, -0.01007, -0.00922, -0.00882, -0.00861, -0.00806, -0.00745, -0.00653, -0.00607, -0.00549, -0.00491, -0.0051, -0.00464, -0.00421, -0.00314, -0.00284, -0.00253, -0.00204, -0.00208, -0.00198, -0.00192, -0.00177, -0.00137, -0.00162, -0.00168, -0.00177, -0.0018, -0.00153, -0.00104, -0.00067, -0.0007, -0.00058, -0.0003, -0.00034, -0.00018, -0.00028, -0.00034, -6e-05, -0.00018, -0.00024, -0.00018, -0.00024, -0.00034, -0.00034, -0.0003, 0.0003, -0.00012, -0.00046, -0.00095] }] },
+      zebra_sportscar: { dir: './static/images/tem/cond/', train40: false, clipFirst: false,
+               curves: [{ label: 'gradient followed: E(x | sports car)', color: '#4a5aa8', vals: [0.10718, 0.09631, 0.0907, 0.08618, 0.08215, 0.07898, 0.07581, 0.07275, 0.06921, 0.06574, 0.06128, 0.05591, 0.0509, 0.04578, 0.04126, 0.03554, 0.03106, 0.02695, 0.0229, 0.01768, 0.01028, 0.00519, 0.00099, -0.00226, -0.00548, -0.00851, -0.01135, -0.01395, -0.0163, -0.01895, -0.0208, -0.02292, -0.02472, -0.02705, -0.02862, -0.03012, -0.03168, -0.03336, -0.0352, -0.03644, -0.03813, -0.03992, -0.04153, -0.04364, -0.04562, -0.0473, -0.04919, -0.05066, -0.05182, -0.05304, -0.0542, -0.05505, -0.05652, -0.05756, -0.05841, -0.05933, -0.06024, -0.06103, -0.06201, -0.06287, -0.06342, -0.06433, -0.06476, -0.06586, -0.06659, -0.06696, -0.06732, -0.06763, -0.0683, -0.06915, -0.06958, -0.06982, -0.07043, -0.07092, -0.07135, -0.07153, -0.07202, -0.07233, -0.07257, -0.07288, -0.0741] },
+                        { label: 'only measured: E(x | zebra)', color: '#e08a2e', dashed: true, vals: [-0.0206, -0.01855, -0.01621, -0.01349, -0.0109, -0.00827, -0.00528, -0.00151, 0.00292, 0.00752, 0.00993, 0.01076, 0.01265, 0.01379, 0.01521, 0.01699, 0.01825, 0.01929, 0.02051, 0.0216, 0.02376, 0.02534, 0.02712, 0.02991, 0.03259, 0.03421, 0.03601, 0.03778, 0.03937, 0.04074, 0.04272, 0.04492, 0.04694, 0.04889, 0.05005, 0.05133, 0.05273, 0.05396, 0.05499, 0.0564, 0.05792, 0.05951, 0.06055, 0.0625, 0.06451, 0.06622, 0.06793, 0.0694, 0.07025, 0.07172, 0.07288, 0.07355, 0.07465, 0.07513, 0.07587, 0.07605, 0.07611, 0.07642, 0.07703, 0.07745, 0.0777, 0.07794, 0.07812, 0.07849, 0.07892, 0.07941, 0.07953, 0.07965, 0.0802, 0.0805, 0.08081, 0.08099, 0.08087, 0.08124, 0.0813, 0.08148, 0.08154, 0.08154, 0.08179, 0.08209, 0.08185] }] }
     };
-    var RV_DIR = './static/images/tem/refine/';
     function rvPad(n) { return ('00' + n).slice(-3); }
     function rvNiceTicks(lo, hi) {
       var raw = (hi - lo) / 5, mag = Math.pow(10, Math.floor(Math.log10(raw))), st = mag;
@@ -1023,22 +1059,27 @@
       for (var v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) out.push(+v.toFixed(6));
       return out;
     }
+    function rvFmt(v) { return (v >= 0 ? '+' : '') + v.toFixed(4); }
     Array.prototype.forEach.call(document.querySelectorAll('.rv'), function (root) {
-      var name = root.getAttribute('data-name'), label = root.getAttribute('data-label'), E = RV_ENERGY[name];
+      var name = root.getAttribute('data-name'), label = root.getAttribute('data-label'), cfg = RV_CFG[name];
+      var curves = cfg.curves, N = curves[0].vals.length - 1, multi = curves.length > 1;
       var svg = root.querySelector('.rv-plot');
       var title = root.querySelector('.rv-title'), slider = root.querySelector('.rv-slider');
-      var X0 = 76, X1 = 412, Y0 = 8, Y1 = 236, N = E.length - 1;
-      var lo = Math.min.apply(null, E), hi = Math.max.apply(null, E.slice(1)), pad = (hi - lo) * 0.08;
-      lo -= pad; hi += pad;                                   // step 0 (pure noise) is clipped at the top
+      slider.max = N;
+      var X0 = 76, X1 = 412, Y0 = 8, Y1 = 236;
+      var all = [];
+      curves.forEach(function (c) { all = all.concat(cfg.clipFirst ? c.vals.slice(1) : c.vals); });
+      var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all), pad = (hi - lo) * 0.08;
+      lo -= pad; hi += pad;                                   // with clipFirst, step 0 (pure noise) is clipped at the top
       function x(t) { return X0 + (X1 - X0) * t / N; }
       function y(e) { return Y0 + (Y1 - Y0) * (hi - Math.min(e, hi)) / (hi - lo); }
-      function path(upto) {
+      function path(vals, upto) {
         var d = '';
-        for (var t = 0; t <= upto; t++) d += (t ? 'L' : 'M') + x(t).toFixed(1) + ' ' + y(E[t]).toFixed(1);
+        for (var t = 0; t <= upto; t++) d += (t ? 'L' : 'M') + x(t).toFixed(1) + ' ' + y(vals[t]).toFixed(1);
         return d;
       }
       var g = '';
-      g += '<rect x="' + x(40) + '" y="' + Y0 + '" width="' + (X1 - x(40)) + '" height="' + (Y1 - Y0) + '" fill="#f1f1f8"/>';
+      if (cfg.train40) g += '<rect x="' + x(40) + '" y="' + Y0 + '" width="' + (X1 - x(40)) + '" height="' + (Y1 - Y0) + '" fill="#f1f1f8"/>';
       rvNiceTicks(lo, hi).forEach(function (v) {
         g += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#e6e6e6"/>';
         g += '<text x="' + (X0 - 7) + '" y="' + (y(v) + 5) + '" font-size="15" fill="#555" text-anchor="end">' + v.toFixed(3) + '</text>';
@@ -1047,26 +1088,63 @@
         g += '<text x="' + x(t) + '" y="' + (Y1 + 20) + '" font-size="15" fill="#555" text-anchor="middle">' + t + '</text>';
       }
       g += '<rect x="' + X0 + '" y="' + Y0 + '" width="' + (X1 - X0) + '" height="' + (Y1 - Y0) + '" fill="none" stroke="#333"/>';
-      g += '<line x1="' + x(40) + '" x2="' + x(40) + '" y1="' + Y0 + '" y2="' + Y1 + '" stroke="#555" stroke-dasharray="5 4"/>';
-      g += '<text x="' + (x(40) + 6) + '" y="' + (Y0 + 19) + '" font-size="14.5" fill="#444">training (40 steps)</text>';
-      g += '<text x="' + ((x(40) + X1) / 2 + 6) + '" y="' + (Y0 + 40) + '" font-size="14.5" fill="#777" font-style="italic" text-anchor="middle">inference refinement</text>';
+      if (cfg.train40) {
+        g += '<line x1="' + x(40) + '" x2="' + x(40) + '" y1="' + Y0 + '" y2="' + Y1 + '" stroke="#555" stroke-dasharray="5 4"/>';
+        g += '<text x="' + (x(40) - 6) + '" y="' + (Y0 + 19) + '" font-size="14.5" fill="#444" text-anchor="end">training</text>';
+        g += '<text x="' + (x(40) - 6) + '" y="' + (Y0 + 36) + '" font-size="14.5" fill="#444" text-anchor="end">(40 steps)</text>';
+        g += '<text x="' + ((x(40) + X1) / 2) + '" y="' + (Y0 + 19) + '" font-size="14.5" fill="#777" font-style="italic" text-anchor="middle">inference refinement</text>';
+      }
       g += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 46) + '" font-size="16" fill="#333" text-anchor="middle">Sampling step</text>';
       g += '<text x="16" y="' + ((Y0 + Y1) / 2) + '" font-size="16" fill="#333" text-anchor="middle" transform="rotate(-90 16 ' + ((Y0 + Y1) / 2) + ')">Energy (total)</text>';
-      g += '<path d="' + path(N) + '" fill="none" stroke="#cfcfcf" stroke-width="2"/>';
-      g += '<path class="rv-done" fill="none" stroke="#4a5aa8" stroke-width="2.5"/>';
+      curves.forEach(function (c, k) {
+        g += '<path d="' + path(c.vals, N) + '" fill="none" stroke="#d6d6d6" stroke-width="2"/>';
+        g += '<path class="rv-done" data-k="' + k + '" fill="none" stroke="' + c.color + '" stroke-width="2.5"' + (c.dashed ? ' stroke-dasharray="6 4"' : '') + '/>';
+      });
       var IX = 444, IS = Y1 - Y0;   // sample image: same top and height as the plot frame
       g += '<clipPath id="rv-clip-' + name + '"><rect x="' + IX + '" y="' + Y0 + '" width="' + IS + '" height="' + IS + '" rx="6"/></clipPath>';
       g += '<image class="rv-im" x="' + IX + '" y="' + Y0 + '" width="' + IS + '" height="' + IS + '" clip-path="url(#rv-clip-' + name + ')" preserveAspectRatio="xMidYMid slice"/>';
-      g += '<circle class="rv-dot" r="6" fill="#b5532a" stroke="#fff" stroke-width="1.5"/>';
-      g += '<text class="rv-e" x="' + (X0 + 10) + '" y="' + (Y1 - 12) + '" font-size="16" fill="#222"></text>';
+      if (multi) {   // arrow showing the descent direction on the followed (target) energy only
+        g += '<defs><marker id="rv-arr-' + name + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">' +
+             '<path d="M0 0 L10 5 L0 10 z" fill="#4a5aa8"/></marker></defs>';
+        g += '<g class="rv-grad"><line stroke="#4a5aa8" stroke-width="3" stroke-linecap="round" marker-end="url(#rv-arr-' + name + ')"/></g>';
+      }
+      curves.forEach(function (c, k) {
+        g += '<circle class="rv-dot" data-k="' + k + '" r="6" fill="' + (multi ? c.color : '#b5532a') + '" stroke="#fff" stroke-width="1.5"/>';
+      });
+      if (multi) {   // legend + one live readout per curve, in a row under the panel title
+        var leg = document.createElement('div');
+        leg.className = 'rv-legend';
+        leg.innerHTML = curves.map(function (c, k) {
+          return '<span class="rv-leg-item"><i style="border-top: 3px ' + (c.dashed ? 'dashed' : 'solid') + ' ' + c.color + '"></i>' +
+                 '<span class="rv-e" data-k="' + k + '"></span></span>';
+        }).join('');
+        title.parentNode.insertBefore(leg, title.nextSibling);
+      } else {
+        g += '<text class="rv-e" data-k="0" x="' + (X0 + 10) + '" y="' + (Y1 - 12) + '" font-size="16" fill="#222"></text>';
+      }
       svg.innerHTML = g;
-      var done = svg.querySelector('.rv-done'), dot = svg.querySelector('.rv-dot'), eTxt = svg.querySelector('.rv-e'), img = svg.querySelector('.rv-im');
+      var img = svg.querySelector('.rv-im');
       function show(t) {
-        img.setAttribute('href', RV_DIR + name + '/step_' + rvPad(t) + '.jpg');
+        img.setAttribute('href', cfg.dir + name + '/step_' + rvPad(t) + '.jpg');
         title.textContent = label + ' \u00b7 step ' + t + '/' + N;
-        done.setAttribute('d', path(t));
-        dot.setAttribute('cx', x(t)); dot.setAttribute('cy', y(E[t]));
-        eTxt.textContent = 'E = ' + (E[t] >= 0 ? '+' : '') + E[t].toFixed(4);
+        curves.forEach(function (c, k) {
+          svg.querySelector('.rv-done[data-k="' + k + '"]').setAttribute('d', path(c.vals, t));
+          var dot = svg.querySelector('.rv-dot[data-k="' + k + '"]');
+          dot.setAttribute('cx', x(t)); dot.setAttribute('cy', y(c.vals[t]));
+          root.querySelector('.rv-e[data-k="' + k + '"]').textContent = (multi ? c.label + ' = ' : 'E = ') + rvFmt(c.vals[t]);
+        });
+        var grad = svg.querySelector('.rv-grad');
+        if (grad) {
+          // Arrow along the target-energy curve: the chain descends it step by step.
+          var v = curves[0].vals, L = 34, ahead = t <= N - 8;
+          var t0 = ahead ? t : t - 8, t1 = ahead ? t + 8 : t;
+          var dx = x(t1) - x(t0), dy = y(v[t1]) - y(v[t0]), len = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / len, uy = dy / len;
+          var px = x(t), py = y(v[t]), ln = grad.querySelector('line');
+          var sx = ahead ? px + ux * 10 : px - ux * (L + 10), sy = ahead ? py + uy * 10 : py - uy * (L + 10);
+          var ex = sx + ux * L, ey = sy + uy * L;
+          ln.setAttribute('x1', sx.toFixed(1)); ln.setAttribute('y1', sy.toFixed(1));
+          ln.setAttribute('x2', ex.toFixed(1)); ln.setAttribute('y2', ey.toFixed(1));
+        }
         slider.style.setProperty('--rv-pct', (100 * t / N) + '%');
       }
       var sweeping = false;
@@ -1075,7 +1153,7 @@
         slider.addEventListener(ev, function () { sweeping = false; });   // user takes over
       });
       show(+slider.value);
-      root.rvSweep = function () {   // play 0 -> 120 once, then leave it to the visitor
+      root.rvSweep = function () {   // play 0 -> N once, then leave it to the visitor
         sweeping = true;
         var start = null, dur = 4000;
         function step(ts) {
@@ -1089,15 +1167,15 @@
         requestAnimationFrame(step);
       };
       // Preload every frame once the viewer is near the screen so scrubbing is smooth.
-      var preload = function () { for (var k = 0; k <= N; k++) new Image().src = RV_DIR + name + '/step_' + rvPad(k) + '.jpg'; };
+      var preload = function () { for (var k = 0; k <= N; k++) new Image().src = cfg.dir + name + '/step_' + rvPad(k) + '.jpg'; };
       if ('IntersectionObserver' in window) {
         new IntersectionObserver(function (en, obs) { if (en[0].isIntersecting) { preload(); obs.disconnect(); } },
                                  { rootMargin: '400px' }).observe(root);
       } else { preload(); }
     });
-    (function () {   // sweep both viewers once, the first time they are mostly on screen
-      var wrap = document.querySelector('.refine-viewers');
-      if (!wrap || !('IntersectionObserver' in window)) return;
+    // Sweep each group of viewers once, the first time it is mostly on screen.
+    Array.prototype.forEach.call(document.querySelectorAll('.refine-viewers'), function (wrap) {
+      if (!('IntersectionObserver' in window)) return;
       new IntersectionObserver(function (en, obs) {
         if (!en[0].isIntersecting) return;
         obs.disconnect();
@@ -1105,7 +1183,7 @@
           Array.prototype.forEach.call(wrap.querySelectorAll('.rv'), function (r) { if (r.rvSweep) r.rvSweep(); });
         }, 400);
       }, { threshold: 0.6 }).observe(wrap);
-    })();
+    });
 
     // Interactive composition.
     var COMP = './static/images/tem/comp/';
@@ -1127,8 +1205,8 @@
       var pr = pairs[i];
       imgA.src = COMP + pr.ai; imgA.alt = pr.a; labA.textContent = pr.a;
       imgB.src = COMP + pr.bi; imgB.alt = pr.b; labB.textContent = pr.b;
-      box.classList.remove('done', 'busy');
-      imgOut.removeAttribute('src'); imgOut.alt = pr.a + ' + ' + pr.b;
+      box.classList.remove('done', 'busy', 'noise', 'morph');
+      imgOut.removeAttribute('src'); imgOut.alt = '';   // empty until composed, so no alt text shows in the box
       new Image().src = COMP + pr.out;  // preload
       labOut.textContent = 'composed result';
       eq.textContent = 'E(' + pr.a + ') + E(' + pr.b + ')';
@@ -1137,16 +1215,21 @@
       Array.prototype.forEach.call(chips.children, function (c, k) { c.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
     }
     function compose() {
-      var pr = pairs[current];
+      var pr = pairs[current], tag = document.getElementById('c-tag');
       go.disabled = true;
-      box.classList.add('busy');
-      evRun(1400);
-      timer = setTimeout(function () {
-        imgOut.src = COMP + pr.out;
-        box.classList.remove('busy');
-        box.classList.add('done');
-        labOut.textContent = pr.a + ' + ' + pr.b;
-      }, 1500);
+      imgOut.alt = 'Composed sample: ' + pr.a + ' + ' + pr.b;
+      imgOut.src = COMP + pr.out;
+      box.classList.add('noise');                       // 1) start from pure noise
+      tag.textContent = 'pure noise';
+      timer = setTimeout(function () {                  // 2) noise turns into the composed sample
+        box.classList.remove('noise'); box.classList.add('morph');
+        tag.textContent = 'sampling with E\u2081 + E\u2082\u2026';
+        evRun(1500);
+        timer = setTimeout(function () {                // 3) done
+          box.classList.remove('morph'); box.classList.add('done');
+          labOut.textContent = pr.a + ' + ' + pr.b;
+        }, 1650);
+      }, 900);
     }
     pairs.forEach(function (pr, i) {
       var b = document.createElement('button');
@@ -1290,6 +1373,53 @@
           if (visible && !was) startAuto();
           if (!visible) { clearInterval(auto); if (!userPicked) setMode('pra'); }
         }, { threshold: 0.3 }).observe(root);
+      }
+    })();
+
+    // Method figure: light up early -> mid -> final energy heads, then their sum. Loops while on screen.
+    (function () {
+      var root = document.querySelector('.arch-heads');
+      if (!root) return;
+      var glows = root.querySelectorAll('.eh-glow'), items = root.querySelectorAll('.hd'), timers = [], visible = false;
+      function each(list, f) { Array.prototype.forEach.call(list, f); }
+      // Fraction of the diagram (from the top) still hidden at each step, for the blocks and the heads columns.
+      var maskB = root.querySelector('#mask-blocks'), maskH = root.querySelector('#mask-heads');
+      var HIDE = { '-1': [85.9, 100], '0': [53.1, 47.2], '1': [35.5, 28.1], '2': [0, 0], '3': [0, 0] };
+      function mask(k) {
+        var h = HIDE[String(k)] || [0, 0];
+        maskB.style.height = h[0] + '%'; maskH.style.height = h[1] + '%';
+      }
+      function step(k) {   // k = 0 early, 1 mid, 2 final, 3 sum
+        mask(k);
+        each(glows, function (g) { g.classList.toggle('on', +g.getAttribute('data-k') === k); });
+        each(items, function (el) {
+          var j = +el.getAttribute('data-k');
+          el.classList.toggle('shown', j <= k);
+          el.classList.toggle('active', j === k);
+        });
+      }
+      function play() {
+        timers.forEach(clearTimeout); timers = [];
+        root.classList.add('animating');
+        step(-1);
+        [0, 1, 2, 3].forEach(function (k, i) { timers.push(setTimeout(function () { step(k); }, 500 + i * 1100)); });
+        timers.push(setTimeout(function () { each(glows, function (g) { g.classList.remove('on'); }); }, 500 + 4 * 1100));
+        timers.push(setTimeout(function () { step(-1); }, 500 + 3 * 1100 + 3200));
+        timers.push(setTimeout(function () { if (visible) play(); }, 500 + 3 * 1100 + 3900));
+      }
+      function stop() {
+        timers.forEach(clearTimeout); timers = [];
+        root.classList.remove('animating');
+        mask(3);
+        each(glows, function (g) { g.classList.remove('on'); });
+        each(items, function (el) { el.classList.remove('active'); });
+      }
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (en) {
+          var was = visible; visible = en[0].isIntersecting;
+          if (visible && !was) play();
+          if (!visible) stop();
+        }, { threshold: 0.4 }).observe(root);
       }
     })();
 
