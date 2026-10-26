@@ -102,6 +102,9 @@
     .author-contact .icon { height: 1em; width: 1.1em; }
     .author-contact .icon svg, .author-contact .icon i { height: 0.95em; vertical-align: 0; }
 
+    .method-box { border: 1px solid #dfe4ec; border-radius: 12px; padding: 1.4rem 1.5rem 1.2rem; background: #fcfdff; }
+    .method-sub { margin-bottom: 1rem !important; }
+
     /* Abstract video */
     .abstract-video { margin-top: 1.75rem; }
     .abstract-video video { width: 100%; display: block; border-radius: 8px; border: 1px solid #e5e5e5; }
@@ -708,8 +711,9 @@
 <!-- Method -->
 <section class="section">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Method</h2>
-
+    <div class="method-box">
+      <h2 class="title is-3 has-text-centered">Method</h2>
+      <h3 class="title is-4 method-sub">Multi-layer Energy Composition</h3>
     <div class="arch-heads">
       <div class="arch-wrap">
         <img class="arch-img" src="./static/images/tem/architecture_tnr_revised.png" alt="TEM architecture">
@@ -737,15 +741,7 @@
       object layout without fine detail, and the final head keeps only coarse semantics. Sampling from their
       <b>sum</b> satisfies all three at once.
     </p>
-
-
-  </div>
-</section>
-
-<!-- Positive Representation Alignment -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Positive Representation Alignment</h2>
+      <h3 class="title is-4 method-sub" style="margin-top: 2.5rem;" id="pra-title">Positive Representation Alignment</h3>
     <div class="columns is-vcentered">
       <div class="column is-5">
         <div class="pra-modes" role="tablist" aria-label="Choose which alignment setting to show">
@@ -901,6 +897,7 @@
       the same clean input; Langevin samples $x^-$ get <b>no</b> alignment, since they lie off the data manifold and
       aligning them would work against the contrastive push.
     </p>
+    </div>
   </div>
 </section>
 
