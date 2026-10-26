@@ -305,6 +305,15 @@
     /* Gallery */
     .gallery { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
     .gallery img { width: 100%; display: block; }
+    .gallery-512 { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+    .gal-wrap { position: relative; }
+    .gal-wrap.collapsed { max-height: var(--gal-peek, 420px); overflow: hidden; }
+    .gal-veil { display: none; }
+    .gal-wrap.collapsed .gal-veil { display: block; position: absolute; left: 0; right: 0; bottom: 0; height: 45%;
+                                    background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 85%); pointer-events: none; }
+    .gal-more { text-align: center; margin-top: 0.6rem; }
+    .gal-more[hidden] { display: none !important; }
+    .gal-sub { margin-bottom: 0.6rem !important; color: #444; }
 
     /* Tables */
     .results-table { overflow-x: auto; }
@@ -321,6 +330,7 @@
     @media (max-width: 768px) {
       .composer-main { grid-template-columns: 1fr; }
       .gallery { grid-template-columns: repeat(4, 1fr); }
+      .gallery-512 { grid-template-columns: repeat(2, 1fr); }
       .refine-viewers { grid-template-columns: 1fr; }
       .arch-heads { grid-template-columns: 1fr 1fr; }
       .arch-wrap { grid-column: span 2; }
@@ -428,7 +438,7 @@
 </section>
 
 <!-- Abstract -->
-<section class="section" style="padding-top: 0;">
+<section class="section" style="padding-top: 0; padding-bottom: 1.5rem;">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
@@ -475,7 +485,7 @@
 </section>
 
 <!-- Scaling -->
-<section class="section">
+<section class="section" style="padding-top: 0.5rem;">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Scaling Behavior</h2>
     <div class="img-row cols-3">
@@ -934,8 +944,30 @@
 <section class="section">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">More Samples</h2>
-    <div class="gallery" id="gallery"></div>
-    <p class="figure-caption has-text-centered">Uncurated class-conditional ImageNet 256&times;256 samples from TEM-XL.</p>
+    <div class="gal-wrap collapsed" id="gal-wrap">
+    <div class="gallery gallery-512">
+      <img src="./static/images/tem/samples512/01_class0311_n02226429_04.jpg" alt="TEM sample, ImageNet 512&times;512: grasshopper" title="grasshopper" loading="lazy">
+      <img src="./static/images/tem/samples512/02_class0349_n02415577_05.jpg" alt="TEM sample, ImageNet 512&times;512: bighorn sheep" title="bighorn sheep" loading="lazy">
+      <img src="./static/images/tem/samples512/03_class0009_n01518878_06.jpg" alt="TEM sample, ImageNet 512&times;512: ostrich" title="ostrich" loading="lazy">
+      <img src="./static/images/tem/samples512/04_class0327_n02317335_06.jpg" alt="TEM sample, ImageNet 512&times;512: starfish" title="starfish" loading="lazy">
+      <img src="./static/images/tem/samples512/05_class0298_n02137549_07.jpg" alt="TEM sample, ImageNet 512&times;512: mongoose" title="mongoose" loading="lazy">
+      <img src="./static/images/tem/samples512/06_class0234_n02106550_02.jpg" alt="TEM sample, ImageNet 512&times;512: Rottweiler" title="Rottweiler" loading="lazy">
+      <img src="./static/images/tem/samples512/07_class0470_n02948072_01.jpg" alt="TEM sample, ImageNet 512&times;512: candle" title="candle" loading="lazy">
+      <img src="./static/images/tem/samples512/08_class0936_n07714571_08.jpg" alt="TEM sample, ImageNet 512&times;512: head cabbage" title="head cabbage" loading="lazy">
+      <img src="./static/images/tem/samples512/09_class0950_n07747607_04.jpg" alt="TEM sample, ImageNet 512&times;512: orange" title="orange" loading="lazy">
+      <img src="./static/images/tem/samples512/10_class0980_n09472597_08.jpg" alt="TEM sample, ImageNet 512&times;512: volcano" title="volcano" loading="lazy">
+      <img src="./static/images/tem/samples512/11_class0127_n02002556_05.jpg" alt="TEM sample, ImageNet 512&times;512: white stork" title="white stork" loading="lazy">
+      <img src="./static/images/tem/samples512/12_class0292_n02129604_03.jpg" alt="TEM sample, ImageNet 512&times;512: tiger" title="tiger" loading="lazy">
+    </div>
+    <div class="gallery" id="gallery" style="margin-top: 4px;"></div>
+    <p class="figure-caption has-text-centered"><i>Top:</i> selected ImageNet 512&times;512 samples. <i>Bottom:</i> uncurated ImageNet 256&times;256 samples from TEM-XL. All class-conditional, without guidance.</p>
+      <div class="gal-veil"></div>
+    </div>
+    <div class="gal-more">
+      <button type="button" class="button is-rounded is-dark" id="gal-more">
+        <span>See more samples</span><span class="icon is-small"><i class="fas fa-chevron-down"></i></span>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -1423,9 +1455,25 @@
       }
     })();
 
+    // More Samples: show the first row and a half, fade the rest; expand on click.
+    (function () {
+      var wrap = document.getElementById('gal-wrap'), btn = document.getElementById('gal-more');
+      if (!wrap || !btn) return;
+      var first = wrap.querySelector('.gallery-512 img');
+      function peek() { if (first) wrap.style.setProperty('--gal-peek', Math.round(first.getBoundingClientRect().height * 1.45) + 'px'); }
+      peek();
+      window.addEventListener('resize', peek);
+      if (first && !first.complete) first.addEventListener('load', peek);
+      btn.addEventListener('click', function () {
+        wrap.classList.remove('collapsed');
+        btn.parentNode.hidden = true;
+        wrap.querySelectorAll('img[loading="lazy"]').forEach(function (im) { im.loading = 'eager'; });
+      });
+    })();
+
     // Sample gallery.
-    var classes = ['0007', '0012', '0017', '0051', '0068', '0109', '0113', '0135', '0207', '0308', '0324', '0331',
-                   '0337', '0390', '0397', '0524', '0649', '0672', '0679', '0730', '0825', '0931', '0937', '0939'];
+    var classes = ['0109', '0679', '0937', '0524', '0135', '0397', '0939', '0931', '0113', '0730', '0390', '0649',
+                   '0207', '0007', '0308', '0331', '0051', '0672', '0017', '0012', '0825', '0337', '0068', '0324'];
     var gallery = document.getElementById('gallery');
     classes.forEach(function (c) {
       var im = document.createElement('img');
