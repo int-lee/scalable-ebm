@@ -54,6 +54,20 @@
     /* Architecture + per-head samples */
     .arch-heads { display: grid; grid-template-columns: 5fr 1.05fr auto 2fr; align-items: center; gap: 12px; }
     .arch-img { width: 100%; display: block; }
+    .arch-wrap { position: relative; }
+    .eh-glow { position: absolute; border-radius: 6px; border: 3px solid #f2a33a; box-shadow: 0 0 14px 3px rgba(242, 163, 58, 0.6);
+               opacity: 0; transition: opacity 0.35s; pointer-events: none; }
+    .eh-glow.on { opacity: 1; }
+    .arch-mask { position: absolute; top: 0; height: 0; background: rgba(255, 255, 255, 0.88);
+                 transition: height 0.6s ease-in-out; pointer-events: none; }
+    .arch-heads .hd { transition: opacity 0.5s, transform 0.5s, filter 0.5s; }
+    .arch-heads.animating .hd { opacity: 0.15; filter: grayscale(0.6); }
+    .arch-heads.animating .hd.shown { opacity: 1; filter: none; }
+    .arch-heads .hd.active img { box-shadow: 0 0 0 3px #f2a33a, 0 0 12px 2px rgba(242, 163, 58, 0.55); }
+    .arch-heads .head-sum.hd.active img { box-shadow: 0 0 0 3px #f6c453, 0 0 16px 4px rgba(246, 196, 83, 0.7); }
+    .arch-heads .head-sum.hd.shown { animation: hd-pop 0.6s ease-out; }
+    .arch-heads .head-sum-op.hd.shown { color: #f2a33a; }
+    @keyframes hd-pop { from { transform: scale(0.9); } to { transform: scale(1); } }
     .head-stack { display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
     .head-stack figure, .head-sum { margin: 0; text-align: center; }
     .head-stack img, .head-sum img { width: 100%; display: block; border-radius: 4px; }
@@ -78,6 +92,15 @@
     .tldr { text-align: left; background: #f3f7fd; border-left: 4px solid #2b6cb0; border-radius: 6px;
             padding: 0.9rem 1rem; margin-bottom: 1.5rem; font-size: 1.18rem; line-height: 1.5; }
     .tldr-label { font-family: 'Google Sans', sans-serif; font-weight: 700; color: #2b6cb0; margin-right: 0.4rem; }
+
+    .teaser .hero-body { padding-bottom: 1rem; }
+
+    .ebm-more { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.6rem; }
+    .ebm-more .button { font-size: 0.95rem; }
+
+    .author-contact { color: #666; margin-top: 0.3rem; display: flex; justify-content: center; align-items: center; gap: 0.3rem; line-height: 1; }
+    .author-contact .icon { height: 1em; width: 1.1em; }
+    .author-contact .icon svg, .author-contact .icon i { height: 0.95em; vertical-align: 0; }
 
     /* Abstract video */
     .abstract-video { margin-top: 1.75rem; }
@@ -138,6 +161,109 @@
     .energy-viz.on #ev-ball { opacity: 1; }
     .ev-note { font-size: 0.85rem; color: #555; text-align: center; margin: 0.2rem 0 0.3rem; }
 
+    /* Animated CLEVR position composition */
+    .cd-grid { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 4px; }
+    .cd-row-label { writing-mode: vertical-rl; transform: rotate(180deg); display: flex; flex-direction: column;
+                    align-items: center; justify-content: center; gap: 2px; padding: 0 2px; line-height: 1.15; }
+    .cd-row-label b { font-family: 'Google Sans', sans-serif; font-size: 0.9rem; }
+    .cd-row-label span { font-size: 0.7rem; color: #777; }
+    .cd-row-data b { color: #b38600; }
+    .cd-row-gen b { color: #1f9d3a; }
+    .cd-col-label { text-align: center; font-size: 0.8rem; color: #777; }
+    .cd-panel { position: relative; margin: 0; aspect-ratio: 1 / 1; overflow: hidden; background: #eef1f5; }
+    .cd-panel img, .cd-panel svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .cd-gen img { opacity: 0; filter: blur(12px); transition: opacity 0.9s ease-out, filter 1.4s ease-out; }
+    .cd-gen.shown img { opacity: 1; filter: none; }
+    .cd-box { fill: none; stroke-width: 3; stroke-dasharray: 248; stroke-dashoffset: 248; transition: stroke-dashoffset 0.45s ease-out; }
+    .cd-box.drawn { stroke-dashoffset: 0; }
+    #clevr-demo svg { transition: opacity 0.5s; }
+    #clevr-demo.cd-fade svg { opacity: 0; }
+    #clevr-demo.cd-fade .cd-gen img { opacity: 0; transition: opacity 0.5s; }
+    .cd-box.yellow { stroke: #ffcc00; }
+    .cd-box.green { stroke: #33dd33; }
+
+    /* Animated inpainting */
+    #inpaint-demo .ip-frame { background: #eef1f5; border-radius: 4px; overflow: hidden; }
+    #inpaint-demo .ip-frame img { opacity: 0; filter: blur(8px); transition: opacity 0.5s ease-out, filter 0.7s ease-out; }
+    #inpaint-demo .ip-cell.shown .ip-frame img { opacity: 1; filter: none; }
+    #inpaint-demo figcaption { transition: color 0.3s; }
+    #inpaint-demo .ip-cell.current figcaption { color: #2b6cb0; font-weight: 700; }
+    #inpaint-demo.ip-fade .ip-frame img { opacity: 0; transition: opacity 0.5s; }
+
+    /* PRA diagram */
+    .pra-fig { background: #fff; border: 1px solid #e3e8ef; border-radius: 10px; padding: 0.5rem 0.6rem; }
+    .pra-svg { width: 100%; height: auto; display: block; }
+    .pra-views { display: grid; }
+    .pra-view { grid-area: 1 / 1; align-self: center; }
+    .pra-view[hidden] { display: block !important; visibility: hidden; }
+    .pra-toggle { display: flex; justify-content: center; gap: 0.4rem; margin: 0.2rem 0 0.6rem; }
+    .pra-toggle button { font: inherit; font-size: 0.95rem; font-weight: 600; border: 1px solid #cfd8e3; background: #fff;
+                         color: #444; border-radius: 999px; padding: 0.35rem 1.1rem; cursor: pointer; }
+    .pra-toggle button:hover { border-color: #888; }
+    .pra-toggle button[data-view="tem"][aria-selected="true"] { background: #2e9e5b; border-color: #2e9e5b; color: #fff; }
+    .pra-toggle button[data-view="diff"][aria-selected="true"] { background: #7b61c9; border-color: #7b61c9; color: #fff; }
+    #pra-anim text { font-family: 'Google Sans', 'Noto Sans', sans-serif; }
+    .pra-h { font-size: 17px; font-weight: 700; }
+    .pra-dif { fill: #6a4fc0; } .pra-pos { fill: #1f7a45; } .pra-neg { fill: #c06a12; }
+    .pra-sub { font-size: 13px; fill: #666; }
+    .pra-note { font-size: 12px; fill: #777; }
+    .pra-netlab { font-size: 13px; font-weight: 700; fill: #2c3e70; }
+    .pra-blk { fill: #dfe8fb; stroke: #8aa3d6; stroke-width: 1.2; }
+    .pra-blk-tap { fill: #c7d5f6; stroke: #4a5aa8; stroke-width: 2; }
+    .pra-out-e, .pra-out-d { fill: #fff; stroke: #2c3e70; stroke-width: 2; }
+    .pra-out-t { font-size: 15px; font-weight: 700; fill: #2c3e70; }
+    .pra-e { font-size: 13px; font-weight: 700; }
+    .pra-vfm { fill: #1e2a5a; }
+    .pra-vfm-t { font-size: 15px; font-weight: 700; fill: #fff; }
+    .pra-vfm-s { font-size: 12px; fill: #c9d3f0; }
+    .pra-node { fill: #4a5aa8; } .pra-node-v { fill: #1e2a5a; }
+    .pra-faded { opacity: 0.28; }
+    .pra-arrow { stroke: #8a94a3; stroke-width: 2; fill: none; marker-end: url(#pra-arr); }
+    .pra-link { stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1;
+                transition: stroke-dashoffset 0.7s ease-out; }
+    .pra-link-d { stroke: #7b61c9; } .pra-link-p { stroke: #2e9e5b; } .pra-link-n { stroke: #e08a2e; }
+    .pra-off { font-size: 13.5px; font-weight: 700; fill: #8a94a3; }
+    #pra-anim [data-show] { opacity: 0; transition: opacity 0.45s; }
+    #pra-anim[data-mode="none"] [data-show~="none"], #pra-anim[data-mode="posneg"] [data-show~="posneg"],
+    #pra-anim[data-mode="pra"] [data-show~="pra"] { opacity: 1; }
+    #pra-anim[data-mode="none"] .pra-link[data-show~="none"], #pra-anim[data-mode="posneg"] .pra-link[data-show~="posneg"],
+    #pra-anim[data-mode="pra"] .pra-link[data-show~="pra"] { stroke-dashoffset: 0; }
+    #pra-anim .pra-dimmable { transition: opacity 0.45s; }
+    #pra-anim .pra-h, #pra-anim .pra-outline, #pra-anim .pra-pt-p, #pra-anim .pra-pt-n { transition: fill 0.45s, stroke 0.45s; }
+    #pra-anim[data-mode="none"] .pra-h.pra-pos, #pra-anim[data-mode="none"] .pra-h.pra-neg { fill: #9aa1ab; }
+    #pra-anim[data-mode="none"] .pra-outline { stroke: #b4bac3; }
+    #pra-anim[data-mode="none"] .pra-pt-p, #pra-anim[data-mode="none"] .pra-pt-n { fill: #b4bac3; }
+
+    #pra-anim[data-mode="none"] .pra-dimmable[data-dim~="none"], #pra-anim[data-mode="posneg"] .pra-dimmable[data-dim~="posneg"],
+    #pra-anim[data-mode="pra"] .pra-dimmable[data-dim~="pra"] { opacity: 0.28; }
+    .pra-modes { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.4rem; }
+    .pra-modes button { font: inherit; font-size: 0.85rem; font-weight: 600; border: 1px solid #cfd8e3; background: #fff;
+                        color: #444; border-radius: 999px; padding: 0.25rem 0.8rem; cursor: pointer; }
+    .pra-modes button:hover { border-color: #888; }
+    .pra-modes button[data-mode="none"][aria-selected="true"] { background: #8f949c; border-color: #8f949c; color: #fff; }
+    .pra-modes button[data-mode="posneg"][aria-selected="true"] { background: #2b2b2b; border-color: #2b2b2b; color: #fff; }
+    .pra-modes button[data-mode="pra"][aria-selected="true"] { background: #d33a3a; border-color: #d33a3a; color: #fff; }
+    #pra-chart { width: 100%; height: auto; display: block; }
+    #pra-chart text { font-family: 'Google Sans', 'Noto Sans', sans-serif; }
+    .fc-grid { stroke: #ececec; } .fc-axis { stroke: #555; stroke-width: 1.2; }
+    .fc-tick { font-size: 12.5px; fill: #666; } .fc-lab { font-size: 14px; fill: #333; }
+    .fc-legt { font-size: 12.5px; fill: #333; } .fc-end { font-size: 12.5px; font-weight: 700; fill: #333; }
+    .fc-series, .fc-leg { transition: opacity 0.4s; }
+    #pra-chart.focus .fc-series, #pra-chart.focus .fc-leg { opacity: 0.18; }
+    #pra-chart.focus .fc-series.on, #pra-chart.focus .fc-leg.on { opacity: 1; }
+    #pra-chart .fc-series.on polyline { stroke-width: 3.5; }
+    #pra-anim .pra-link.on { stroke-dashoffset: 0; }
+    .pra-nolink { stroke: #c4c9d1; stroke-width: 2.5; stroke-dasharray: 6 6; }
+    .pra-ok { font-size: 13.5px; font-weight: 700; fill: #1f7a45; }
+    .pra-lab-d { font-size: 13.5px; font-weight: 700; fill: #6a4fc0; }
+    .pra-x { font-size: 13.5px; font-weight: 700; fill: #c06a12; }
+    .pra-land { fill: none; stroke: #2b6cb0; stroke-width: 3; }
+    .pra-land-arr { fill: none; stroke: #7b61c9; stroke-width: 1.6; stroke-dasharray: 4 3; marker-end: url(#pra-arr2); }
+    .pra-pt-d { fill: #fff; stroke: #7b61c9; stroke-width: 2.5; }
+    .pra-pt-p { fill: #2e9e5b; stroke: #fff; stroke-width: 2; }
+    .pra-pt-n { fill: #e08a2e; stroke: #fff; stroke-width: 1.5; }
+    .pra-star { fill: #f6c453; stroke: #b8860b; stroke-width: 1; }
+
     /* OOD diagram */
     .ood-diagram { width: 100%; height: auto; display: block; }
     .ood-diagram text { font-family: 'Google Sans', 'Noto Sans', sans-serif; }
@@ -149,10 +275,24 @@
     .ood-t-cap { font-size: 12.5px; fill: #666; }
     .ood-link { stroke: #999; stroke-width: 1.5; stroke-dasharray: 4 4; }
 
-    /* Sampling GIFs */
-    .refine-gifs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 1400px; margin: 0 auto; }
-    .refine-gifs img { width: 100%; display: block; border-radius: 6px; background: #fff; }
-
+    /* Sampling trajectory viewers */
+    .refine-viewers { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 1400px; margin: 0 auto; }
+    .rv { background: #fff; border-radius: 8px; padding: 0.8rem 1rem 0.9rem; }
+    .rv-plot { width: 100%; height: auto; display: block; }
+    .rv-plot text { font-family: 'Google Sans', 'Noto Sans', sans-serif; }
+    .rv-title { font-family: 'Google Sans', sans-serif; font-size: 1.05rem; color: #333; text-align: center; margin-bottom: 0.5rem; }
+    .rv-control { margin-top: 0.9rem; }
+    .rv-hint { text-align: center; font-family: 'Google Sans', sans-serif; font-size: 1.1rem; color: #4a5aa8;
+               font-weight: 600; margin-bottom: 0.8rem; }
+    .rv-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 999px; cursor: pointer;
+                 background: linear-gradient(to right, #4a5aa8 var(--rv-pct, 0%), #d9dce6 var(--rv-pct, 0%)); outline: none; }
+    .rv-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 40px; height: 14px; border-radius: 999px;
+                                       background: #eceef2; border: 1px solid #a9aeb8; box-shadow: 0 1px 3px rgba(0,0,0,0.25); cursor: grab; }
+    .rv-slider::-moz-range-thumb { width: 40px; height: 14px; border-radius: 999px; background: #eceef2; border: 1px solid #a9aeb8;
+                                   box-shadow: 0 1px 3px rgba(0,0,0,0.3); cursor: grab; }
+    .rv-slider::-moz-range-track { height: 6px; border-radius: 999px; background: transparent; }
+    .rv-slider:active::-webkit-slider-thumb { cursor: grabbing; }
+    .rv-slider:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(74, 90, 168, 0.3); }
     /* Gallery */
     .gallery { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
     .gallery img { width: 100%; display: block; }
@@ -164,6 +304,7 @@
     .results-table td:first-child, .results-table th:first-child { text-align: left !important; }
     .results-table tr.group td { font-style: italic; font-weight: 600; background: #f5f5f5; text-align: left !important; }
     .results-table tr.ours td { background: #eef6ff; font-weight: 600; }
+    .results-table tr.avg td { background: #eef6ff; }
 
     .eq-block { overflow-x: auto; }
     .section .title.is-3 { margin-top: 0.5rem; }
@@ -171,9 +312,9 @@
     @media (max-width: 768px) {
       .composer-main { grid-template-columns: 1fr; }
       .gallery { grid-template-columns: repeat(4, 1fr); }
-      .refine-gifs { grid-template-columns: 1fr; }
+      .refine-viewers { grid-template-columns: 1fr; }
       .arch-heads { grid-template-columns: 1fr 1fr; }
-      .arch-img { grid-column: span 2; }
+      .arch-wrap { grid-column: span 2; }
       .head-sum-op { display: none; }
       .teaser-grid { grid-template-columns: repeat(4, 1fr); }
       .cols-7 { grid-template-columns: repeat(4, 1fr); }
@@ -199,6 +340,9 @@
             <span class="author-block"><sup>1</sup>MIT,</span>
             <span class="author-block"><sup>2</sup>UIUC,</span>
             <span class="author-block"><sup>3</sup>Harvard University</span>
+          </div>
+          <div class="is-size-6 publication-authors author-contact">
+            <sup>1</sup><span class="icon is-small" aria-label="Email"><i class="fas fa-envelope"></i></span><a href="mailto:bus6479@mit.edu">bus6479@mit.edu</a>
           </div>
 
           <div class="column has-text-centered">
@@ -278,7 +422,7 @@
 </section>
 
 <!-- Abstract -->
-<section class="section">
+<section class="section" style="padding-top: 0;">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
@@ -313,7 +457,7 @@
           <video autoplay muted loop playsinline preload="auto">
             <source src="./static/videos/tem_ebm_training_sampling.mp4" type="video/mp4">
           </video>
-          <p class="figure-caption has-text-centered">
+          <p class="figure-caption" style="text-align: left;">
             <b>How TEM trains and samples.</b> During training, MCMC samples $x^-$ are drawn with Langevin dynamics
             and the energy is pushed down on real data $x^+$ and up on $x^-$. At inference, Langevin sampling on the
             trained energy descends the landscape and lands on the real data.
@@ -347,39 +491,29 @@
   <div class="hero-body">
     <div class="container">
       <h2 class="title is-3 has-text-centered">Inference-Time Scaling</h2>
-      <div class="refine-gifs">
-        <img src="./static/images/tem/refine_snail.gif" alt="Snail sample refining over 120 sampling steps, with its energy curve">
-        <img src="./static/images/tem/refine_lemon.gif" alt="Lemon sample refining over 120 sampling steps, with its energy curve">
-      </div>
-      <p class="figure-caption has-text-centered">
-        Energy decreases steadily as sampling proceeds. At the training horizon (40 steps) coarse structure is
-        established but residual noise remains; continuing past it produces increasingly sharp, class-typical images.
-      </p>
-    </div>
-    <div class="container is-max-desktop" style="margin-top: 2rem;">
-      <h3 class="title is-4">Fidelity&ndash;diversity trade-off</h3>
-      <div class="columns is-vcentered">
-        <div class="column is-7">
-          <img src="./static/images/tem/fid_is_tradeoff_new.png" alt="FID vs IS trade-off">
+      <p class="rv-hint">&harr; Drag a slider below to step through sampling, from pure noise to the final sample.</p>
+      <div class="refine-viewers">
+        <div class="rv" data-name="snail" data-label="snail">
+          <div class="rv-title"></div>
+          <svg class="rv-plot" viewBox="0 0 672 290" role="img"
+               aria-label="Total energy of the snail sample over 120 sampling steps, and the sample at the selected step"></svg>
+          <div class="rv-control">
+            <input type="range" class="rv-slider" min="0" max="120" step="1" value="0" aria-label="Sampling step for the snail sample">
+          </div>
         </div>
-        <div class="column">
-          <div class="results-table">
-            <table class="table is-narrow">
-              <thead><tr><th>Model</th><th>Steps</th><th>FID&darr;</th><th>IS&uarr;</th><th>Prec.</th><th>Rec.</th></tr></thead>
-              <tbody>
-                <tr><td>TEM-XL</td><td>40</td><td>7.63</td><td>106.0</td><td>0.65</td><td>0.65</td></tr>
-                <tr class="ours"><td>TEM-XL</td><td>60</td><td>3.82</td><td>176.2</td><td>0.76</td><td>0.57</td></tr>
-                <tr><td>TEM-XL</td><td>80</td><td>4.72</td><td>221.1</td><td>0.81</td><td>0.51</td></tr>
-              </tbody>
-            </table>
+        <div class="rv" data-name="lemon" data-label="lemon">
+          <div class="rv-title"></div>
+          <svg class="rv-plot" viewBox="0 0 672 290" role="img"
+               aria-label="Total energy of the lemon sample over 120 sampling steps, and the sample at the selected step"></svg>
+          <div class="rv-control">
+            <input type="range" class="rv-slider" min="0" max="120" step="1" value="0" aria-label="Sampling step for the lemon sample">
           </div>
         </div>
       </div>
-      <p class="figure-caption">
-        FID-50K vs. Inception Score for TEM-XL when increasing the number of sampling steps (blue) or the step size
-        (green) from the training configuration ($T=40$, $\eta=500$). A moderate increase improves both metrics; beyond
-        that, IS keeps rising while FID degrades. This mirrors the trade-off controlled by classifier-free guidance, from
-        a single network with no retraining.
+      <p class="figure-caption has-text-centered">
+        Langevin sampling from pure noise ($T=0$) to $T=120$. Energy decreases steadily;
+        at the training horizon (40 steps) coarse structure is established but residual noise remains, and continuing
+        past it produces increasingly sharp, class-typical images.
       </p>
     </div>
   </div>
@@ -442,15 +576,18 @@
       </p>
     </div>
 
-    <div class="columns is-centered is-vcentered" style="margin-top: 2rem;">
+    <div class="columns is-centered is-vcentered" style="margin-top: 2rem;" id="clevr-demo">
       <div class="column is-5">
-        <div class="img-row cols-3">
-          <img src="./static/images/tem/clevr/image_040_origin.png" alt="CLEVR condition">
-          <img src="./static/images/tem/clevr/image_021_origin.png" alt="CLEVR condition">
-          <img src="./static/images/tem/clevr/image_086_origin.png" alt="CLEVR condition">
-          <img src="./static/images/tem/clevr/image_040.png" alt="CLEVR TEM sample">
-          <img src="./static/images/tem/clevr/image_021.png" alt="CLEVR TEM sample">
-          <img src="./static/images/tem/clevr/image_086.png" alt="CLEVR TEM sample">
+        <div class="cd-grid">
+          <div></div><div class="cd-col-label">1 obj.</div><div class="cd-col-label">2 obj.</div><div class="cd-col-label">3 obj.</div>
+          <div class="cd-row-label cd-row-data"><b>Dataset</b><span>yellow = object location</span></div>
+          <figure class="cd-panel" data-scene="1obj_040" data-row="condition"><img src="./static/images/tem/clevr/scenes/1obj_040/condition.png" alt="CLEVR scene, 1 conditioned position"><svg viewBox="0 0 256 256" aria-hidden="true"></svg></figure>
+          <figure class="cd-panel" data-scene="2obj_021" data-row="condition"><img src="./static/images/tem/clevr/scenes/2obj_021/condition.png" alt="CLEVR scene, 2 conditioned positions"><svg viewBox="0 0 256 256" aria-hidden="true"></svg></figure>
+          <figure class="cd-panel" data-scene="3obj_086" data-row="condition"><img src="./static/images/tem/clevr/scenes/3obj_086/condition.png" alt="CLEVR scene, 3 conditioned positions"><svg viewBox="0 0 256 256" aria-hidden="true"></svg></figure>
+          <div class="cd-row-label cd-row-gen"><b>Generated</b><span>green = condition</span></div>
+          <figure class="cd-panel cd-gen" data-scene="1obj_040" data-row="generated"><img src="./static/images/tem/clevr/scenes/1obj_040/generated.png" alt="TEM-B sample for 1 conditioned position"><svg viewBox="0 0 256 256" aria-hidden="true"></svg></figure>
+          <figure class="cd-panel cd-gen" data-scene="2obj_021" data-row="generated"><img src="./static/images/tem/clevr/scenes/2obj_021/generated.png" alt="TEM-B sample for 2 conditioned positions"><svg viewBox="0 0 256 256" aria-hidden="true"></svg></figure>
+          <figure class="cd-panel cd-gen" data-scene="3obj_086" data-row="generated"><img src="./static/images/tem/clevr/scenes/3obj_086/generated.png" alt="TEM-B sample for 3 conditioned positions"><svg viewBox="0 0 256 256" aria-hidden="true"></svg></figure>
         </div>
       </div>
       <div class="column">
@@ -466,8 +603,9 @@
       </div>
     </div>
     <p class="figure-caption">
-      <b>CLEVR 256&times;256 compositional generation.</b> <i>Top row:</i> conditioning inputs; yellow boxes are the
-      specified object positions. <i>Bottom row:</i> TEM-B samples; green boxes mark detected objects. <i>Table:</i>
+      <b>CLEVR 256&times;256 compositional generation.</b> <i>Top row:</i> example dataset images; yellow boxes mark
+      where objects are located. <i>Bottom row:</i> TEM-B samples conditioned on those locations; green boxes show the
+      conditioned locations. <i>Table:</i>
       object detection success rate (&uarr;) over 1,000 scenes, compared with Composable Diffusion.
     </p>
   </div>
@@ -527,7 +665,7 @@
               <tr><td>Textures</td><td>0.439</td><td>0.426</td><td>0.438</td><td><b>0.687</b></td></tr>
               <tr><td>Places365</td><td><b>0.669</b></td><td>0.621</td><td>0.481</td><td>0.636</td></tr>
               <tr><td>SUN</td><td>0.505</td><td>0.513</td><td>0.500</td><td><b>0.640</b></td></tr>
-              <tr class="ours"><td>Average</td><td>0.598</td><td>0.573</td><td>0.549</td><td>0.717</td></tr>
+              <tr class="avg"><td>Average</td><td>0.598</td><td>0.573</td><td>0.549</td><td><b>0.717</b></td></tr>
             </tbody>
           </table>
         </div>
@@ -545,28 +683,25 @@
 <section class="section">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Zero-Shot Inpainting</h2>
-    <div class="content has-text-justified">
-      <p>
-        Because TEM defines a single energy over image latents, inpainting is just sampling on the missing region while
-        resetting the observed latents to their encoded values after each step. The image is masked before VAE
-        encoding, so no ground-truth content leaks into the hole.
-      </p>
+    <div class="img-row cols-6" id="inpaint-demo">
+      <figure class="ip-cell ip-masked" data-col="0"><img src="./static/images/tem/inpaint/In_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
+      <figure class="ip-cell" data-col="1"><div class="ip-frame"><img src="./static/images/tem/inpaint/In_mask1.png" alt="T=0"></div><figcaption>$T=0$</figcaption></figure>
+      <figure class="ip-cell" data-col="2"><div class="ip-frame"><img src="./static/images/tem/inpaint/In_mask2.png" alt="T=20"></div><figcaption>$T=20$</figcaption></figure>
+      <figure class="ip-cell" data-col="3"><div class="ip-frame"><img src="./static/images/tem/inpaint/In_mask3.png" alt="T=40"></div><figcaption>$T=40$</figcaption></figure>
+      <figure class="ip-cell" data-col="4"><div class="ip-frame"><img src="./static/images/tem/inpaint/In_mask4.png" alt="T=60"></div><figcaption>$T=60$</figcaption></figure>
+      <figure class="ip-cell" data-col="5"><div class="ip-frame"><img src="./static/images/tem/inpaint/In_mask5.png" alt="T=80"></div><figcaption>$T=80$</figcaption></figure>
+      <figure class="ip-cell ip-masked" data-col="0"><img src="./static/images/tem/inpaint/out_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
+      <figure class="ip-cell" data-col="1"><div class="ip-frame"><img src="./static/images/tem/inpaint/out_mask1.png" alt="T=0"></div><figcaption>$T=0$</figcaption></figure>
+      <figure class="ip-cell" data-col="2"><div class="ip-frame"><img src="./static/images/tem/inpaint/out_mask2.png" alt="T=20"></div><figcaption>$T=20$</figcaption></figure>
+      <figure class="ip-cell" data-col="3"><div class="ip-frame"><img src="./static/images/tem/inpaint/out_mask3.png" alt="T=40"></div><figcaption>$T=40$</figcaption></figure>
+      <figure class="ip-cell" data-col="4"><div class="ip-frame"><img src="./static/images/tem/inpaint/out_mask4.png" alt="T=60"></div><figcaption>$T=60$</figcaption></figure>
+      <figure class="ip-cell" data-col="5"><div class="ip-frame"><img src="./static/images/tem/inpaint/out_mask5.png" alt="T=80"></div><figcaption>$T=80$</figcaption></figure>
     </div>
-    <div class="img-row cols-6">
-      <figure><img src="./static/images/tem/inpaint/In_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask1.png" alt="T=0"><figcaption>$T=0$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask2.png" alt="T=20"><figcaption>$T=20$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask3.png" alt="T=40"><figcaption>$T=40$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask4.png" alt="T=60"><figcaption>$T=60$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/In_mask5.png" alt="T=80"><figcaption>$T=80$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask0.png" alt="masked"><figcaption>Masked</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask1.png" alt="T=0"><figcaption>$T=0$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask2.png" alt="T=20"><figcaption>$T=20$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask3.png" alt="T=40"><figcaption>$T=40$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask4.png" alt="T=60"><figcaption>$T=60$</figcaption></figure>
-      <figure><img src="./static/images/tem/inpaint/out_mask5.png" alt="T=80"><figcaption>$T=80$</figcaption></figure>
-    </div>
-    <p class="figure-caption">Inpainting a meerkat (top) and a movie theater (bottom) across sampling steps.</p>
+    <p class="figure-caption">
+      With an energy-based model, inpainting needs no retraining. We start sampling directly on the masked area,
+      following the energy gradient only there while the rest of the image stays fixed, so the missing part fills
+      in to match its surroundings.
+    </p>
   </div>
 </section>
 
@@ -576,14 +711,21 @@
     <h2 class="title is-3 has-text-centered">Method</h2>
 
     <div class="arch-heads">
-      <img class="arch-img" src="./static/images/tem/architecture_tnr_revised.png" alt="TEM architecture">
-      <div class="head-stack">
-        <figure><img src="./static/images/tem/heads/cls139_heads2.png" alt="final head sample"><figcaption>$E_{\text{fin}}$: semantics</figcaption></figure>
-        <figure><img src="./static/images/tem/heads/cls139_heads1.png" alt="middle head sample"><figcaption>$E_{\text{mid}}$: layout</figcaption></figure>
-        <figure><img src="./static/images/tem/heads/cls139_heads0.png" alt="early head sample"><figcaption>$E_{\text{early}}$: texture</figcaption></figure>
+      <div class="arch-wrap">
+        <img class="arch-img" src="./static/images/tem/architecture_tnr_revised.png" alt="TEM architecture">
+        <span class="arch-mask" id="mask-blocks" style="left: 0; width: 47.6%;"></span>
+        <span class="arch-mask" id="mask-heads" style="left: 47.6%; width: 15.2%;"></span>
+        <span class="eh-glow" data-k="2" style="left: 49.1%; top: 9.3%; width: 5.4%; height: 17.7%;"></span>
+        <span class="eh-glow" data-k="1" style="left: 49.1%; top: 28.4%; width: 5.4%; height: 17.6%;"></span>
+        <span class="eh-glow" data-k="0" style="left: 49.1%; top: 47.5%; width: 5.4%; height: 17.7%;"></span>
       </div>
-      <div class="head-sum-op"><span>$\sum$</span><i class="fas fa-arrow-right"></i></div>
-      <figure class="head-sum">
+      <div class="head-stack" id="heads-demo">
+        <figure class="hd" data-k="2"><img src="./static/images/tem/heads/cls139_heads2.png" alt="final head sample"><figcaption>$E_{\text{fin}}$: semantics</figcaption></figure>
+        <figure class="hd" data-k="1"><img src="./static/images/tem/heads/cls139_heads1.png" alt="middle head sample"><figcaption>$E_{\text{mid}}$: layout</figcaption></figure>
+        <figure class="hd" data-k="0"><img src="./static/images/tem/heads/cls139_heads0.png" alt="early head sample"><figcaption>$E_{\text{early}}$: texture</figcaption></figure>
+      </div>
+      <div class="head-sum-op hd" data-k="3"><span>$\sum$</span><i class="fas fa-arrow-right"></i></div>
+      <figure class="head-sum hd" data-k="3">
         <img src="./static/images/tem/heads/cls139_headsfull.png" alt="sample from summed energy">
         <figcaption>$E_{\text{early}} + E_{\text{mid}} + E_{\text{fin}}$</figcaption>
       </figure>
@@ -596,43 +738,169 @@
       <b>sum</b> satisfies all three at once.
     </p>
 
-    <div class="columns is-centered is-vcentered" style="margin-top: 2rem;">
-      <div class="column is-6">
-        <img class="img-shadow" src="./static/images/tem/Trainingstrategy_tmr.png" alt="Training strategy">
-      </div>
-      <div class="column">
-        <p class="figure-caption">
-          <b>Training strategy.</b> Contrastive training pushes down the energy of data samples $x^+$ and pushes up the
-          energy of MCMC negatives $x^-$, while Positive Representation Alignment (PRA) aligns the model's internal
-          features with a frozen vision foundation model.
-        </p>
-      </div>
-    </div>
 
   </div>
 </section>
 
-<!-- PRA ablation -->
+<!-- Positive Representation Alignment -->
 <section class="section">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Align Positives Only</h2>
+    <h2 class="title is-3 has-text-centered">Positive Representation Alignment</h2>
     <div class="columns is-vcentered">
-      <div class="column is-6">
-        <img src="./static/images/tem/fid_pra_B_final.png" alt="Effect of PRA">
+      <div class="column is-5">
+        <div class="pra-modes" role="tablist" aria-label="Choose which alignment setting to show">
+          <button type="button" role="tab" data-mode="none">Without RA</button>
+          <button type="button" role="tab" data-mode="posneg">Pos+Neg RA</button>
+          <button type="button" role="tab" data-mode="pra" aria-selected="true">With PRA</button>
+        </div>
+        <svg id="pra-chart" viewBox="0 0 420 320" role="img" aria-label="FID-50K over training steps for TEM-B: Without RA 151.2, 107.5, 78.5, 42.8; Pos+Neg RA 155.6, 107.4, 63.2, 36.6; With PRA 137.3, 103.5, 43.4, 19.9 at 12.5K, 25K, 37.5K and 50K steps."><line x1="58" x2="400" y1="268.0" y2="268.0" class="fc-grid"/><text x="50" y="272.0" class="fc-tick" text-anchor="end">0</text><line x1="58" x2="400" y1="238.4" y2="238.4" class="fc-grid"/><text x="50" y="242.4" class="fc-tick" text-anchor="end">20</text><line x1="58" x2="400" y1="208.7" y2="208.7" class="fc-grid"/><text x="50" y="212.7" class="fc-tick" text-anchor="end">40</text><line x1="58" x2="400" y1="179.1" y2="179.1" class="fc-grid"/><text x="50" y="183.1" class="fc-tick" text-anchor="end">60</text><line x1="58" x2="400" y1="149.4" y2="149.4" class="fc-grid"/><text x="50" y="153.4" class="fc-tick" text-anchor="end">80</text><line x1="58" x2="400" y1="119.8" y2="119.8" class="fc-grid"/><text x="50" y="123.8" class="fc-tick" text-anchor="end">100</text><line x1="58" x2="400" y1="90.1" y2="90.1" class="fc-grid"/><text x="50" y="94.1" class="fc-tick" text-anchor="end">120</text><line x1="58" x2="400" y1="60.5" y2="60.5" class="fc-grid"/><text x="50" y="64.5" class="fc-tick" text-anchor="end">140</text><line x1="58" x2="400" y1="30.8" y2="30.8" class="fc-grid"/><text x="50" y="34.8" class="fc-tick" text-anchor="end">160</text><text x="78.0" y="286" class="fc-tick" text-anchor="middle">12.5K</text><text x="178.7" y="286" class="fc-tick" text-anchor="middle">25K</text><text x="279.3" y="286" class="fc-tick" text-anchor="middle">37.5K</text><text x="380.0" y="286" class="fc-tick" text-anchor="middle">50K</text><line x1="58" x2="400" y1="268" y2="268" class="fc-axis"/><text x="229.0" y="310" class="fc-lab" text-anchor="middle">Training steps</text><text x="16" y="142.0" class="fc-lab" text-anchor="middle" transform="rotate(-90 16 142.0)">FID-50K ↓</text><g class="fc-series" data-key="none"><polyline points="78.0,43.9 178.7,108.6 279.3,151.6 380.0,204.6" fill="none" stroke="#8f949c" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="6 4"/><circle cx="78.0" cy="43.9" r="5" fill="#8f949c" stroke="#fff" stroke-width="2"><title>Without RA · 12.5K steps: FID 151.2</title></circle><circle cx="178.7" cy="108.6" r="5" fill="#8f949c" stroke="#fff" stroke-width="2"><title>Without RA · 25K steps: FID 107.5</title></circle><circle cx="279.3" cy="151.6" r="5" fill="#8f949c" stroke="#fff" stroke-width="2"><title>Without RA · 37.5K steps: FID 78.5</title></circle><circle cx="380.0" cy="204.6" r="5" fill="#8f949c" stroke="#fff" stroke-width="2"><title>Without RA · 50K steps: FID 42.8</title></circle><text x="390.0" y="208.6" class="fc-end">42.8</text></g><g class="fc-series" data-key="posneg"><polyline points="78.0,37.3 178.7,108.8 279.3,174.3 380.0,213.7" fill="none" stroke="#2b2b2b" stroke-width="2.5" stroke-linejoin="round"/><circle cx="78.0" cy="37.3" r="5" fill="#2b2b2b" stroke="#fff" stroke-width="2"><title>Pos+Neg RA · 12.5K steps: FID 155.6</title></circle><circle cx="178.7" cy="108.8" r="5" fill="#2b2b2b" stroke="#fff" stroke-width="2"><title>Pos+Neg RA · 25K steps: FID 107.4</title></circle><circle cx="279.3" cy="174.3" r="5" fill="#2b2b2b" stroke="#fff" stroke-width="2"><title>Pos+Neg RA · 37.5K steps: FID 63.2</title></circle><circle cx="380.0" cy="213.7" r="5" fill="#2b2b2b" stroke="#fff" stroke-width="2"><title>Pos+Neg RA · 50K steps: FID 36.6</title></circle><text x="390.0" y="217.7" class="fc-end">36.6</text></g><g class="fc-series" data-key="pra"><polyline points="78.0,64.5 178.7,114.6 279.3,203.7 380.0,238.5" fill="none" stroke="#d33a3a" stroke-width="2.5" stroke-linejoin="round"/><circle cx="78.0" cy="64.5" r="5" fill="#d33a3a" stroke="#fff" stroke-width="2"><title>With PRA · 12.5K steps: FID 137.3</title></circle><circle cx="178.7" cy="114.6" r="5" fill="#d33a3a" stroke="#fff" stroke-width="2"><title>With PRA · 25K steps: FID 103.5</title></circle><circle cx="279.3" cy="203.7" r="5" fill="#d33a3a" stroke="#fff" stroke-width="2"><title>With PRA · 37.5K steps: FID 43.4</title></circle><circle cx="380.0" cy="238.5" r="5" fill="#d33a3a" stroke="#fff" stroke-width="2"><title>With PRA · 50K steps: FID 19.9</title></circle><text x="390.0" y="242.5" class="fc-end">19.9</text></g><g class="fc-leg" data-key="none"><line x1="282" x2="304" y1="22" y2="22" stroke="#8f949c" stroke-width="2.5" stroke-dasharray="6 4"/><circle cx="293" cy="22" r="4" fill="#8f949c"/><text x="310" y="26" class="fc-legt">Without RA</text></g><g class="fc-leg" data-key="posneg"><line x1="282" x2="304" y1="42" y2="42" stroke="#2b2b2b" stroke-width="2.5"/><circle cx="293" cy="42" r="4" fill="#2b2b2b"/><text x="310" y="46" class="fc-legt">Pos+Neg RA</text></g><g class="fc-leg" data-key="pra"><line x1="282" x2="304" y1="62" y2="62" stroke="#d33a3a" stroke-width="2.5"/><circle cx="293" cy="62" r="4" fill="#d33a3a"/><text x="310" y="66" class="fc-legt">With PRA</text></g></svg>
       </div>
-      <div class="column content">
-        <p>
-          PRA lowers FID-50K of TEM-B from <b>42.8 to 19.9</b> at 50K steps. Also aligning negative samples
-          (Pos+Neg RA) still helps over no alignment but reaches only <b>36.6</b>, erasing most of the gain:
-          negatives give the wrong alignment target.
-        </p>
-        <p>
-          Unlike representation alignment in diffusion models, where a noisy input is aligned with features of its
-          clean counterpart, both TEM and the VFM see the same clean $x^+$. PRA does not guide any sampling trajectory;
-          it shapes the geometry of the low-energy region directly.
-        </p>
+      <div class="column">
+        <div class="pra-fig" id="pra-anim" data-mode="pra">
+          <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+            <defs>
+              <marker id="pra-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8a94a3"/>
+              </marker>
+              <marker id="pra-arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#7b61c9"/>
+              </marker>
+              <filter id="pra-noise" x="0" y="0" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="2.2" numOctaves="1" seed="3"/>
+                <feColorMatrix type="saturate" values="5"/>
+              </filter>
+            </defs>
+          </svg>
+          <div class="pra-toggle" role="tablist" aria-label="Choose which alignment to show">
+            <button type="button" role="tab" data-view="tem" aria-selected="true">TEM (ours)</button>
+            <button type="button" role="tab" data-view="diff" aria-selected="false">Diffusion (REPA)</button>
+          </div>
+          <div class="pra-views">
+          <div class="pra-view" data-view="tem">
+          <svg class="pra-svg" viewBox="0 0 538 574" role="img" aria-label="TEM aligns mid-layer features with a frozen VFM only for dataset images, where both see the same clean input; Langevin samples get no alignment.">
+            <text x="8" y="24"><tspan class="pra-h pra-pos">Positive phase</tspan><tspan dx="10" class="pra-sub">dataset image x⁺</tspan></text>
+            <g><clipPath id="pra-ipos"><rect x="8" y="38" width="90" height="90" rx="5"/></clipPath><image href="./static/images/tem/ood/id_sample.jpg" x="8" y="38" width="90" height="90" preserveAspectRatio="xMidYMid slice" clip-path="url(#pra-ipos)"/><rect x="8" y="38" width="90" height="90" rx="5" fill="none" stroke="#2e9e5b" stroke-width="3" class="pra-outline"/><text x="53" y="146" class="pra-note" text-anchor="middle">x⁺ (dataset)</text><line x1="102" y1="83" x2="120" y2="83" class="pra-arrow"/></g>
+            <rect x="124" y="48" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="146" y1="83" x2="154" y2="83" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="154" y="48" width="22" height="70" rx="3" class="pra-blk pra-blk-tap"/>
+            <line x1="176" y1="83" x2="184" y2="83" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="184" y="48" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="206" y1="83" x2="214" y2="83" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="214" y="48" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="236" y1="83" x2="244" y2="83" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="244" y="48" width="22" height="70" rx="3" class="pra-blk"/>
+            <text x="205" y="44" class="pra-netlab" text-anchor="middle">TEM</text>
+            <line x1="268" y1="83" x2="286" y2="83" class="pra-arrow"/>
+            <circle cx="302" cy="83" r="15" class="pra-out-e"/><text x="302" y="88" class="pra-out-t" text-anchor="middle">E</text>
+            <text x="302" y="116" class="pra-e pra-pos" text-anchor="middle">energy ↓</text>
+            <line x1="159" y1="118" x2="159" y2="148" stroke="#4a5aa8" stroke-width="2"/>
+            <circle cx="159" cy="158" r="10" class="pra-node"/>
+            <text x="159" y="182" class="pra-note" text-anchor="middle">mid-layer features</text>
+            <g class="pra-dimmable" data-dim="none"><g><clipPath id="pra-vposc"><rect x="342" y="57" width="50" height="50" rx="4"/></clipPath><image href="./static/images/tem/ood/id_sample.jpg" x="342" y="57" width="50" height="50" preserveAspectRatio="xMidYMid slice" clip-path="url(#pra-vposc)"/><rect x="342" y="57" width="50" height="50" rx="4" fill="none" stroke="#2e9e5b" stroke-width="2" class="pra-outline"/><text x="367" y="52" class="pra-note" text-anchor="middle">same x⁺</text><line x1="394" y1="82" x2="408" y2="82" class="pra-arrow"/></g><rect x="410" y="44" width="120" height="76" rx="8" class="pra-vfm"/><text x="470" y="78" class="pra-vfm-t" text-anchor="middle">Frozen VFM</text><text x="470" y="98" class="pra-vfm-s" text-anchor="middle">(DINOv2)</text><line x1="470" y1="121" x2="470" y2="145" class="pra-arrow"/><circle cx="470" cy="158" r="10" class="pra-node pra-node-v"/></g>
+            <line x1="171" y1="158" x2="458" y2="158" pathLength="1" class="pra-link pra-link-p" data-show="posneg pra"/>
+            <g data-show="posneg pra"><text x="314" y="146" class="pra-ok" text-anchor="middle">✓ align on the same clean x⁺</text></g>
+            <g data-show="none"><line x1="171" y1="158" x2="458" y2="158" class="pra-nolink"/><text x="314" y="146" class="pra-off" text-anchor="middle">no alignment</text></g>
+            <line x1="4" y1="196" x2="534" y2="196" stroke="#e3e6eb" stroke-width="1.5"/>
+            <text x="8" y="220"><tspan class="pra-h pra-neg">Negative phase</tspan><tspan dx="10" class="pra-sub">Langevin samples x⁻</tspan></text>
+            <g><clipPath id="pra-n0"><rect x="8" y="234" width="62" height="62" rx="4"/></clipPath><image href="./static/images/tem/refine/snail/step_000.jpg" x="8" y="234" width="62" height="62" preserveAspectRatio="xMidYMid slice" clip-path="url(#pra-n0)"/><rect x="8" y="234" width="62" height="62" rx="4" fill="none" stroke="#e08a2e" stroke-width="2.5" class="pra-outline"/><clipPath id="pra-n1"><rect x="22" y="248" width="62" height="62" rx="4"/></clipPath><image href="./static/images/tem/refine/snail/step_015.jpg" x="22" y="248" width="62" height="62" preserveAspectRatio="xMidYMid slice" clip-path="url(#pra-n1)"/><rect x="22" y="248" width="62" height="62" rx="4" fill="none" stroke="#e08a2e" stroke-width="2.5" class="pra-outline"/><clipPath id="pra-n2"><rect x="36" y="262" width="62" height="62" rx="4"/></clipPath><image href="./static/images/tem/refine/snail/step_040.jpg" x="36" y="262" width="62" height="62" preserveAspectRatio="xMidYMid slice" clip-path="url(#pra-n2)"/><rect x="36" y="262" width="62" height="62" rx="4" fill="none" stroke="#e08a2e" stroke-width="2.5" class="pra-outline"/><text x="53" y="342" class="pra-note" text-anchor="middle">x⁻ (Langevin)</text><line x1="102" y1="279" x2="120" y2="279" class="pra-arrow"/></g>
+            <rect x="124" y="244" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="146" y1="279" x2="154" y2="279" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="154" y="244" width="22" height="70" rx="3" class="pra-blk pra-blk-tap"/>
+            <line x1="176" y1="279" x2="184" y2="279" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="184" y="244" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="206" y1="279" x2="214" y2="279" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="214" y="244" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="236" y1="279" x2="244" y2="279" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="244" y="244" width="22" height="70" rx="3" class="pra-blk"/>
+            <text x="205" y="240" class="pra-netlab" text-anchor="middle">TEM</text>
+            <line x1="268" y1="279" x2="286" y2="279" class="pra-arrow"/>
+            <circle cx="302" cy="279" r="15" class="pra-out-e"/><text x="302" y="284" class="pra-out-t" text-anchor="middle">E</text>
+            <text x="302" y="312" class="pra-e pra-neg" text-anchor="middle">energy ↑</text>
+            <line x1="159" y1="314" x2="159" y2="344" stroke="#4a5aa8" stroke-width="2"/>
+            <circle cx="159" cy="354" r="10" class="pra-node"/>
+            <text x="159" y="378" class="pra-note" text-anchor="middle">mid-layer features</text>
+            <g data-show="posneg"><clipPath id="pra-vnegn"><rect x="342" y="253" width="50" height="50" rx="4"/></clipPath><image href="./static/images/tem/refine/snail/step_015.jpg" x="342" y="253" width="50" height="50" preserveAspectRatio="xMidYMid slice" clip-path="url(#pra-vnegn)"/><rect x="342" y="253" width="50" height="50" rx="4" fill="none" stroke="#e08a2e" stroke-width="2" class="pra-outline"/><text x="367" y="248" class="pra-note" text-anchor="middle">same x⁻</text><line x1="394" y1="278" x2="408" y2="278" class="pra-arrow"/></g>
+            <g class="pra-dimmable" data-dim="none pra"><rect x="410" y="240" width="120" height="76" rx="8" class="pra-vfm"/><text x="470" y="274" class="pra-vfm-t" text-anchor="middle">Frozen VFM</text><text x="470" y="294" class="pra-vfm-s" text-anchor="middle">(DINOv2)</text><line x1="470" y1="317" x2="470" y2="341" class="pra-arrow"/><circle cx="470" cy="354" r="10" class="pra-node pra-node-v"/></g>
+            <line x1="171" y1="354" x2="458" y2="354" pathLength="1" class="pra-link pra-link-n" data-show="posneg"/>
+            <g data-show="posneg"><text x="314" y="342" class="pra-x" text-anchor="middle">also aligned (Pos+Neg RA)</text></g>
+            <g data-show="pra"><line x1="171" y1="354" x2="458" y2="354" class="pra-nolink"/><circle cx="314" cy="354" r="13" fill="#fff" stroke="#e08a2e" stroke-width="2.5"/><path d="M308 348 L320 360 M320 348 L308 360" stroke="#e08a2e" stroke-width="3" stroke-linecap="round"/><text x="314" y="337" class="pra-x" text-anchor="middle">no alignment (off-manifold)</text></g>
+            <g data-show="none"><line x1="171" y1="354" x2="458" y2="354" class="pra-nolink"/><text x="314" y="342" class="pra-off" text-anchor="middle">no alignment</text></g>
+            <line x1="4" y1="392" x2="534" y2="392" stroke="#e3e6eb" stroke-width="1.5"/>
+            <text x="269.0" y="418" class="pra-sub" text-anchor="middle" data-show="pra">Intuition: only clean data at the bottom of the energy basin is aligned</text>
+            <text x="269.0" y="418" class="pra-sub" text-anchor="middle" data-show="posneg">Pos+Neg RA: Langevin samples on the slopes are aligned too</text>
+            <text x="269.0" y="418" class="pra-sub" text-anchor="middle" data-show="none">Without RA: nothing is aligned to the VFM</text>
+            <path d="M70.0 434.8L74.0 435.0L78.0 435.2L81.9 435.4L85.9 435.7L89.9 436.1L93.9 436.5L97.9 436.9L101.8 437.4L105.8 438.1L109.8 438.7L113.8 439.5L117.8 440.4L121.7 441.5L125.7 442.6L129.7 443.9L133.7 445.3L137.7 446.9L141.6 448.6L145.6 450.5L149.6 452.6L153.6 454.9L157.6 457.4L161.5 460.0L165.5 462.8L169.5 465.9L173.5 469.1L177.5 472.4L181.4 476.0L185.4 479.6L189.4 483.4L193.4 487.4L197.4 491.4L201.3 495.4L205.3 499.5L209.3 503.6L213.3 507.6L217.3 511.6L221.2 515.5L225.2 519.3L229.2 522.8L233.2 526.2L237.2 529.3L241.1 532.1L245.1 534.7L249.1 536.9L253.1 538.7L257.1 540.1L261.0 541.2L265.0 541.8L269.0 542.0L273.0 541.8L277.0 541.2L280.9 540.1L284.9 538.7L288.9 536.9L292.9 534.7L296.9 532.1L300.8 529.3L304.8 526.2L308.8 522.8L312.8 519.3L316.8 515.5L320.7 511.6L324.7 507.6L328.7 503.6L332.7 499.5L336.7 495.4L340.6 491.4L344.6 487.4L348.6 483.4L352.6 479.6L356.6 476.0L360.5 472.4L364.5 469.1L368.5 465.9L372.5 462.8L376.5 460.0L380.4 457.4L384.4 454.9L388.4 452.6L392.4 450.5L396.4 448.6L400.3 446.9L404.3 445.3L408.3 443.9L412.3 442.6L416.3 441.5L420.2 440.4L424.2 439.5L428.2 438.7L432.2 438.1L436.2 437.4L440.1 436.9L444.1 436.5L448.1 436.1L452.1 435.7L456.1 435.4L460.0 435.2L464.0 435.0L468.0 434.8" class="pra-land"/>
+            <text x="62" y="444" class="pra-note" text-anchor="end">energy</text>
+            <circle cx="269.0" cy="534.0" r="8" class="pra-pt-p"/>
+            <text x="269.0" y="496.0" class="pra-ok" text-anchor="middle" data-show="posneg pra">✓ x⁺ aligned</text>
+            <text x="269.0" y="568.0" class="pra-note" text-anchor="middle">dataset image (clean)</text>
+            <circle cx="149.6" cy="444.6" r="7" class="pra-pt-n"/>
+            <path d="M145.6 440.6 L153.6 448.6 M153.6 440.6 L145.6 448.6" stroke="#fff" stroke-width="2" stroke-linecap="round" data-show="pra"/>
+            <circle cx="193.4" cy="479.4" r="7" class="pra-pt-n"/>
+            <path d="M189.4 475.4 L197.4 483.4 M197.4 475.4 L189.4 483.4" stroke="#fff" stroke-width="2" stroke-linecap="round" data-show="pra"/>
+            <circle cx="364.5" cy="461.1" r="7" class="pra-pt-n"/>
+            <path d="M360.5 457.1 L368.5 465.1 M368.5 457.1 L360.5 465.1" stroke="#fff" stroke-width="2" stroke-linecap="round" data-show="pra"/>
+            <text x="207.4" y="463.4" class="pra-x" data-show="pra">✗ x⁻: no alignment</text>
+            <text x="207.4" y="463.4" class="pra-x" data-show="posneg">✓ x⁻ aligned too</text>
+          </svg>
+          </div>
+          <div class="pra-view" data-view="diff" hidden>
+          <svg class="pra-svg" viewBox="0 0 538 382" role="img" aria-label="Diffusion REPA aligns mid-layer features of a noisy input with VFM features of the clean image.">
+            <text x="8" y="24"><tspan class="pra-h pra-dif">Diffusion (REPA)</tspan><tspan dx="10" class="pra-sub">denoiser on noisy input</tspan></text>
+            <g><clipPath id="pra-idiff"><rect x="8" y="38" width="90" height="90" rx="5"/></clipPath><image href="./static/images/tem/ood/id_sample.jpg" x="8" y="38" width="90" height="90" preserveAspectRatio="xMidYMid slice" clip-path="url(#pra-idiff)"/><rect x="8" y="38" width="90" height="90" filter="url(#pra-noise)" opacity="0.88" clip-path="url(#pra-idiff)"/><rect x="8" y="38" width="90" height="90" rx="5" fill="none" stroke="#7b61c9" stroke-width="2.5"/><text x="53" y="146" class="pra-note" text-anchor="middle">noisy xₜ</text><line x1="102" y1="83" x2="120" y2="83" class="pra-arrow"/></g>
+            <rect x="124" y="48" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="146" y1="83" x2="154" y2="83" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="154" y="48" width="22" height="70" rx="3" class="pra-blk pra-blk-tap"/>
+            <line x1="176" y1="83" x2="184" y2="83" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="184" y="48" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="206" y1="83" x2="214" y2="83" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="214" y="48" width="22" height="70" rx="3" class="pra-blk"/>
+            <line x1="236" y1="83" x2="244" y2="83" stroke="#8aa3d6" stroke-width="1.5"/>
+            <rect x="244" y="48" width="22" height="70" rx="3" class="pra-blk"/>
+            <text x="205" y="44" class="pra-netlab" text-anchor="middle">Denoiser</text>
+            <line x1="268" y1="83" x2="286" y2="83" class="pra-arrow"/>
+            <circle cx="302" cy="83" r="15" class="pra-out-d"/><text x="302" y="88" class="pra-out-t" text-anchor="middle">ε̂</text>
+            <text x="302" y="116" class="pra-note" text-anchor="middle">noise pred.</text>
+            <line x1="159" y1="118" x2="159" y2="148" stroke="#4a5aa8" stroke-width="2"/>
+            <circle cx="159" cy="158" r="10" class="pra-node"/>
+            <text x="159" y="182" class="pra-note" text-anchor="middle">mid-layer features</text>
+            <g><clipPath id="pra-vdiffc"><rect x="342" y="57" width="50" height="50" rx="4"/></clipPath><image href="./static/images/tem/ood/id_sample.jpg" x="342" y="57" width="50" height="50" preserveAspectRatio="xMidYMid slice" clip-path="url(#pra-vdiffc)"/><rect x="342" y="57" width="50" height="50" rx="4" fill="none" stroke="#2e9e5b" stroke-width="2" class="pra-outline"/><text x="367" y="52" class="pra-note" text-anchor="middle">clean x₀</text><line x1="394" y1="82" x2="408" y2="82" class="pra-arrow"/></g>
+            <g><rect x="410" y="44" width="120" height="76" rx="8" class="pra-vfm"/><text x="470" y="78" class="pra-vfm-t" text-anchor="middle">Frozen VFM</text><text x="470" y="98" class="pra-vfm-s" text-anchor="middle">(DINOv2)</text><line x1="470" y1="121" x2="470" y2="145" class="pra-arrow"/><circle cx="470" cy="158" r="10" class="pra-node pra-node-v"/></g>
+            <line x1="171" y1="158" x2="458" y2="158" class="pra-link pra-link-d on"/>
+            <text x="314" y="146" class="pra-lab-d" text-anchor="middle">align noisy features → clean target</text>
+            <line x1="4" y1="196" x2="534" y2="196" stroke="#e3e6eb" stroke-width="1.5"/>
+            <text x="269.0" y="222" class="pra-sub" text-anchor="middle">Intuition: every noisy xₜ along the path is aligned to the clean target</text>
+            <path d="M70.0 238.8L74.0 239.0L78.0 239.2L81.9 239.4L85.9 239.7L89.9 240.1L93.9 240.5L97.9 240.9L101.8 241.4L105.8 242.1L109.8 242.7L113.8 243.5L117.8 244.4L121.7 245.5L125.7 246.6L129.7 247.9L133.7 249.3L137.7 250.9L141.6 252.6L145.6 254.5L149.6 256.6L153.6 258.9L157.6 261.4L161.5 264.0L165.5 266.8L169.5 269.9L173.5 273.1L177.5 276.4L181.4 280.0L185.4 283.6L189.4 287.4L193.4 291.4L197.4 295.4L201.3 299.4L205.3 303.5L209.3 307.6L213.3 311.6L217.3 315.6L221.2 319.5L225.2 323.3L229.2 326.8L233.2 330.2L237.2 333.3L241.1 336.1L245.1 338.7L249.1 340.9L253.1 342.7L257.1 344.1L261.0 345.2L265.0 345.8L269.0 346.0L273.0 345.8L277.0 345.2L280.9 344.1L284.9 342.7L288.9 340.9L292.9 338.7L296.9 336.1L300.8 333.3L304.8 330.2L308.8 326.8L312.8 323.3L316.8 319.5L320.7 315.6L324.7 311.6L328.7 307.6L332.7 303.5L336.7 299.4L340.6 295.4L344.6 291.4L348.6 287.4L352.6 283.6L356.6 280.0L360.5 276.4L364.5 273.1L368.5 269.9L372.5 266.8L376.5 264.0L380.4 261.4L384.4 258.9L388.4 256.6L392.4 254.5L396.4 252.6L400.3 250.9L404.3 249.3L408.3 247.9L412.3 246.6L416.3 245.5L420.2 244.4L424.2 243.5L428.2 242.7L432.2 242.1L436.2 241.4L440.1 240.9L444.1 240.5L448.1 240.1L452.1 239.7L456.1 239.4L460.0 239.2L464.0 239.0L468.0 238.8" class="pra-land"/>
+            <path d="M121.7 237.5 Q195.4 207.5 260.0 334.0" class="pra-land-arr"/>
+            <circle cx="121.7" cy="245.5" r="7" class="pra-pt-d"/>
+            <path d="M165.5 258.8 Q217.3 228.8 260.0 334.0" class="pra-land-arr"/>
+            <circle cx="165.5" cy="266.8" r="7" class="pra-pt-d"/>
+            <path d="M205.3 295.5 Q237.2 265.5 260.0 334.0" class="pra-land-arr"/>
+            <circle cx="205.3" cy="303.5" r="7" class="pra-pt-d"/>
+            <path d="M237.2 325.3 Q253.1 295.3 260.0 334.0" class="pra-land-arr"/>
+            <circle cx="237.2" cy="333.3" r="7" class="pra-pt-d"/>
+            <path d="M332.7 295.5 Q300.8 265.5 278.0 334.0" class="pra-land-arr"/>
+            <circle cx="332.7" cy="303.5" r="7" class="pra-pt-d"/>
+            <path d="M380.4 253.4 Q324.7 223.4 278.0 334.0" class="pra-land-arr"/>
+            <circle cx="380.4" cy="261.4" r="7" class="pra-pt-d"/>
+            <path d="M269.0 335.0 l3.2 6.6 7.3 1 -5.3 5.1 1.3 7.2 -6.5 -3.4 -6.5 3.4 1.3 -7.2 -5.3 -5.1 7.3 -1 z" class="pra-star"/>
+            <text x="269.0" y="372.0" class="pra-note" text-anchor="middle">clean x₀ (VFM target)</text>
+            <text x="90" y="308" class="pra-note" text-anchor="middle">noisy xₜ</text>
+          </svg>
+          </div>
+          </div>
+        </div>
       </div>
     </div>
+    <p class="figure-caption">
+      <i>Left:</i> FID-50K over training for TEM-B; the buttons step through the three settings and update the TEM
+      diagram. PRA lowers FID from <b>42.8 to 19.9</b> at 50K steps, while also aligning negatives (Pos+Neg RA) reaches
+      only <b>36.6</b>. <i>Right:</i> switch between TEM and diffusion. Both
+      align <b>mid-layer</b> features with a frozen VFM. Diffusion (REPA) aligns features of a <b>noisy</b> $x_t$ to the
+      <b>clean</b> $x_0$ target, guiding denoising. TEM aligns only <b>dataset images</b> $x^+$, where both networks see
+      the same clean input; Langevin samples $x^-$ get <b>no</b> alignment, since they lie off the data manifold and
+      aligning them would work against the contrastive push.
+    </p>
   </div>
 </section>
 
@@ -645,6 +913,21 @@
   </div>
 </section>
 
+<!-- Related EBM work -->
+<section class="section" style="padding-bottom: 0;">
+  <div class="container is-max-desktop has-text-centered">
+    <h2 class="title is-3">More on Energy-Based Models</h2>
+    <p class="ebm-more">
+      Explore other work on energy-based models for generation, composition, and reasoning.
+      <a href="https://energy-based-model.github.io/" target="_blank" rel="noopener"
+         class="external-link button is-small is-rounded is-dark">
+        <span>More EBM works</span>
+        <span class="icon is-small"><i class="fas fa-external-link-alt"></i></span>
+      </a>
+    </p>
+  </div>
+</section>
+
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
@@ -653,10 +936,6 @@
   author        = {Lee, Jungsoo and Gladstone, Alexi and Du, Yilun},
   journal       = {arXiv preprint arXiv:2610.31889},
   year          = {2026},
-  eprint        = {2610.31889},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.LG},
-  url           = {https://arxiv.org/abs/2610.31889}
 }</code></pre>
   </div>
 </section>
@@ -733,6 +1012,104 @@
       evAnim = requestAnimationFrame(step);
     }
 
+    // Sampling trajectory viewers: slider over the 121 saved frames, with the per-step total energy.
+    var RV_ENERGY = {
+      snail: [0.1366, 0.06464, 0.05731, 0.05273, 0.048, 0.04434, 0.0416, 0.03918, 0.03766, 0.0361, 0.03491, 0.03351, 0.03229, 0.03116, 0.03027, 0.02933, 0.02817, 0.02734, 0.02689, 0.02631, 0.02564, 0.02524, 0.02496, 0.02448, 0.02353, 0.02277, 0.02211, 0.02156, 0.02112, 0.02036, 0.01999, 0.01956, 0.01901, 0.01852, 0.01765, 0.01704, 0.01662, 0.01627, 0.01591, 0.01527, 0.01484, 0.01436, 0.0135, 0.0127, 0.01218, 0.01174, 0.01093, 0.01043, 0.00942, 0.00887, 0.0081, 0.00755, 0.00654, 0.00579, 0.00508, 0.00426, 0.00371, 0.00286, 0.00242, 0.00192, 0.00122, 0.00079, 0.00017, -0.00033, -0.00105, -0.00188, -0.00293, -0.0036, -0.00443, -0.00502, -0.00542, -0.0061, -0.00667, -0.00726, -0.00772, -0.00812, -0.0085, -0.00896, -0.00952, -0.00987, -0.01044, -0.01108, -0.01125, -0.01183, -0.01199, -0.01236, -0.0127, -0.01292, -0.01346, -0.01398, -0.01436, -0.01482, -0.01539, -0.01571, -0.0162, -0.01671, -0.01682, -0.01715, -0.01736, -0.018, -0.01837, -0.01865, -0.01874, -0.0193, -0.01945, -0.01965, -0.02006, -0.02019, -0.02039, -0.02083, -0.02095, -0.02122, -0.02154, -0.0218, -0.02226, -0.02234, -0.02285, -0.02307, -0.02366, -0.02353, -0.0247],
+      lemon: [0.1731, 0.13062, 0.12402, 0.11914, 0.11597, 0.11328, 0.11011, 0.10742, 0.10547, 0.10327, 0.10095, 0.09888, 0.09705, 0.09534, 0.09314, 0.09131, 0.08936, 0.08826, 0.0863, 0.08496, 0.08337, 0.08228, 0.08057, 0.0791, 0.07825, 0.07703, 0.07593, 0.07483, 0.07336, 0.07202, 0.07068, 0.06958, 0.06824, 0.06714, 0.06641, 0.06531, 0.06396, 0.06311, 0.06189, 0.06067, 0.05957, 0.05847, 0.05749, 0.05652, 0.05542, 0.05469, 0.05359, 0.05249, 0.05164, 0.05078, 0.04981, 0.04919, 0.04858, 0.04761, 0.04681, 0.04584, 0.04504, 0.04431, 0.04352, 0.04248, 0.04193, 0.04089, 0.04022, 0.03961, 0.03906, 0.03851, 0.0376, 0.03711, 0.03626, 0.03571, 0.03503, 0.03436, 0.03388, 0.03302, 0.03229, 0.03149, 0.03058, 0.02966, 0.02875, 0.02789, 0.02722, 0.02661, 0.02582, 0.02515, 0.02445, 0.02365, 0.02283, 0.02212, 0.02124, 0.02032, 0.01944, 0.01874, 0.01788, 0.01694, 0.0163, 0.01541, 0.01456, 0.01349, 0.01283, 0.01179, 0.01073, 0.00996, 0.00903, 0.00812, 0.00734, 0.00643, 0.00558, 0.00487, 0.00398, 0.003, 0.00203, 0.00139, 0.00087, -8e-05, -0.00115, -0.00184, -0.0026, -0.00367, -0.00441, -0.00514, -0.00637]
+    };
+    var RV_DIR = './static/images/tem/refine/';
+    function rvPad(n) { return ('00' + n).slice(-3); }
+    function rvNiceTicks(lo, hi) {
+      var raw = (hi - lo) / 5, mag = Math.pow(10, Math.floor(Math.log10(raw))), st = mag;
+      [1, 2, 2.5, 5, 10].some(function (m) { st = m * mag; return st >= raw; });
+      var out = [];
+      for (var v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) out.push(+v.toFixed(6));
+      return out;
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('.rv'), function (root) {
+      var name = root.getAttribute('data-name'), label = root.getAttribute('data-label'), E = RV_ENERGY[name];
+      var svg = root.querySelector('.rv-plot');
+      var title = root.querySelector('.rv-title'), slider = root.querySelector('.rv-slider');
+      var X0 = 76, X1 = 412, Y0 = 8, Y1 = 236, N = E.length - 1;
+      var lo = Math.min.apply(null, E), hi = Math.max.apply(null, E.slice(1)), pad = (hi - lo) * 0.08;
+      lo -= pad; hi += pad;                                   // step 0 (pure noise) is clipped at the top
+      function x(t) { return X0 + (X1 - X0) * t / N; }
+      function y(e) { return Y0 + (Y1 - Y0) * (hi - Math.min(e, hi)) / (hi - lo); }
+      function path(upto) {
+        var d = '';
+        for (var t = 0; t <= upto; t++) d += (t ? 'L' : 'M') + x(t).toFixed(1) + ' ' + y(E[t]).toFixed(1);
+        return d;
+      }
+      var g = '';
+      g += '<rect x="' + x(40) + '" y="' + Y0 + '" width="' + (X1 - x(40)) + '" height="' + (Y1 - Y0) + '" fill="#f1f1f8"/>';
+      rvNiceTicks(lo, hi).forEach(function (v) {
+        g += '<line x1="' + X0 + '" x2="' + X1 + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="#e6e6e6"/>';
+        g += '<text x="' + (X0 - 7) + '" y="' + (y(v) + 5) + '" font-size="15" fill="#555" text-anchor="end">' + v.toFixed(3) + '</text>';
+      });
+      for (var t = 0; t <= N; t += 20) {
+        g += '<text x="' + x(t) + '" y="' + (Y1 + 20) + '" font-size="15" fill="#555" text-anchor="middle">' + t + '</text>';
+      }
+      g += '<rect x="' + X0 + '" y="' + Y0 + '" width="' + (X1 - X0) + '" height="' + (Y1 - Y0) + '" fill="none" stroke="#333"/>';
+      g += '<line x1="' + x(40) + '" x2="' + x(40) + '" y1="' + Y0 + '" y2="' + Y1 + '" stroke="#555" stroke-dasharray="5 4"/>';
+      g += '<text x="' + (x(40) + 6) + '" y="' + (Y0 + 19) + '" font-size="14.5" fill="#444">training (40 steps)</text>';
+      g += '<text x="' + ((x(40) + X1) / 2 + 6) + '" y="' + (Y0 + 40) + '" font-size="14.5" fill="#777" font-style="italic" text-anchor="middle">inference refinement</text>';
+      g += '<text x="' + ((X0 + X1) / 2) + '" y="' + (Y1 + 46) + '" font-size="16" fill="#333" text-anchor="middle">Sampling step</text>';
+      g += '<text x="16" y="' + ((Y0 + Y1) / 2) + '" font-size="16" fill="#333" text-anchor="middle" transform="rotate(-90 16 ' + ((Y0 + Y1) / 2) + ')">Energy (total)</text>';
+      g += '<path d="' + path(N) + '" fill="none" stroke="#cfcfcf" stroke-width="2"/>';
+      g += '<path class="rv-done" fill="none" stroke="#4a5aa8" stroke-width="2.5"/>';
+      var IX = 444, IS = Y1 - Y0;   // sample image: same top and height as the plot frame
+      g += '<clipPath id="rv-clip-' + name + '"><rect x="' + IX + '" y="' + Y0 + '" width="' + IS + '" height="' + IS + '" rx="6"/></clipPath>';
+      g += '<image class="rv-im" x="' + IX + '" y="' + Y0 + '" width="' + IS + '" height="' + IS + '" clip-path="url(#rv-clip-' + name + ')" preserveAspectRatio="xMidYMid slice"/>';
+      g += '<circle class="rv-dot" r="6" fill="#b5532a" stroke="#fff" stroke-width="1.5"/>';
+      g += '<text class="rv-e" x="' + (X0 + 10) + '" y="' + (Y1 - 12) + '" font-size="16" fill="#222"></text>';
+      svg.innerHTML = g;
+      var done = svg.querySelector('.rv-done'), dot = svg.querySelector('.rv-dot'), eTxt = svg.querySelector('.rv-e'), img = svg.querySelector('.rv-im');
+      function show(t) {
+        img.setAttribute('href', RV_DIR + name + '/step_' + rvPad(t) + '.jpg');
+        title.textContent = label + ' \u00b7 step ' + t + '/' + N;
+        done.setAttribute('d', path(t));
+        dot.setAttribute('cx', x(t)); dot.setAttribute('cy', y(E[t]));
+        eTxt.textContent = 'E = ' + (E[t] >= 0 ? '+' : '') + E[t].toFixed(4);
+        slider.style.setProperty('--rv-pct', (100 * t / N) + '%');
+      }
+      var sweeping = false;
+      slider.addEventListener('input', function () { sweeping = false; show(+slider.value); });
+      ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) {
+        slider.addEventListener(ev, function () { sweeping = false; });   // user takes over
+      });
+      show(+slider.value);
+      root.rvSweep = function () {   // play 0 -> 120 once, then leave it to the visitor
+        sweeping = true;
+        var start = null, dur = 4000;
+        function step(ts) {
+          if (!sweeping) return;
+          if (start === null) start = ts;
+          var f = Math.min(1, (ts - start) / dur);
+          var t = Math.round(N * (f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2));
+          if (+slider.value !== t) { slider.value = t; show(t); }
+          if (f < 1) requestAnimationFrame(step); else sweeping = false;
+        }
+        requestAnimationFrame(step);
+      };
+      // Preload every frame once the viewer is near the screen so scrubbing is smooth.
+      var preload = function () { for (var k = 0; k <= N; k++) new Image().src = RV_DIR + name + '/step_' + rvPad(k) + '.jpg'; };
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (en, obs) { if (en[0].isIntersecting) { preload(); obs.disconnect(); } },
+                                 { rootMargin: '400px' }).observe(root);
+      } else { preload(); }
+    });
+    (function () {   // sweep both viewers once, the first time they are mostly on screen
+      var wrap = document.querySelector('.refine-viewers');
+      if (!wrap || !('IntersectionObserver' in window)) return;
+      new IntersectionObserver(function (en, obs) {
+        if (!en[0].isIntersecting) return;
+        obs.disconnect();
+        setTimeout(function () {
+          Array.prototype.forEach.call(wrap.querySelectorAll('.rv'), function (r) { if (r.rvSweep) r.rvSweep(); });
+        }, 400);
+      }, { threshold: 0.6 }).observe(wrap);
+    })();
+
     // Interactive composition.
     var COMP = './static/images/tem/comp/';
     var pairs = [
@@ -783,6 +1160,141 @@
     });
     go.addEventListener('click', compose);
     select(0);
+
+    // Animated CLEVR position composition (boxes measured from the paper's figure images).
+    var CD = './static/images/tem/clevr/scenes/';
+    var cdBoxes = {
+      '1obj_040': [[170, 49, 62, 62]],
+      '2obj_021': [[101, 22, 62, 62], [136, 155, 62, 62]],
+      '3obj_086': [[160, 72, 62, 62], [129, 77, 62, 62], [91, 142, 62, 62]]
+    };
+    var SVGNS = 'http://www.w3.org/2000/svg';
+    var cdPanels = document.querySelectorAll('#clevr-demo .cd-panel'), cdTimers = [];
+    function cdDraw(svg, b, color) {
+      var r = document.createElementNS(SVGNS, 'rect');
+      r.setAttribute('x', b[0]); r.setAttribute('y', b[1]); r.setAttribute('width', b[2]); r.setAttribute('height', b[3]);
+      r.setAttribute('class', 'cd-box ' + color); svg.appendChild(r);
+      r.getBoundingClientRect();  // flush so the draw-in transition runs
+      r.classList.add('drawn');
+    }
+    function cdLater(ms, f) { cdTimers.push(setTimeout(f, ms)); }
+    var cdRoot = document.getElementById('clevr-demo'), cdVisible = false;
+    function cdEach(row, f) {
+      Array.prototype.forEach.call(cdPanels, function (el) { if (el.getAttribute('data-row') === row) f(el); });
+    }
+    function cdPlay() {
+      cdTimers.forEach(clearTimeout); cdTimers = [];
+      cdRoot.classList.remove('cd-fade');
+      Array.prototype.forEach.call(cdPanels, function (el) { el.querySelector('svg').innerHTML = ''; el.classList.remove('shown'); });
+      // 1) yellow dataset object locations, 2) green conditioned locations in the empty sample slots, 3) samples appear.
+      var t = 400;
+      cdEach('condition', function (el) {
+        cdBoxes[el.getAttribute('data-scene')].forEach(function (b) {
+          cdLater(t, function () { cdDraw(el.querySelector('svg'), b, 'yellow'); }); t += 250;
+        });
+      });
+      t += 400;
+      cdEach('generated', function (el) {
+        cdBoxes[el.getAttribute('data-scene')].forEach(function (b) {
+          cdLater(t, function () { cdDraw(el.querySelector('svg'), b, 'green'); }); t += 250;
+        });
+      });
+      t += 500;
+      cdEach('generated', function (el) {
+        cdLater(t, function () { el.classList.add('shown'); }); t += 350;
+      });
+      t += 2800;                                                  // hold the finished figure
+      cdLater(t, function () { cdRoot.classList.add('cd-fade'); });
+      cdLater(t + 700, function () { if (cdVisible) cdPlay(); });  // loop while on screen
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        var was = cdVisible;
+        cdVisible = entries[0].isIntersecting;
+        if (cdVisible && !was) cdPlay();
+        if (!cdVisible) { cdTimers.forEach(clearTimeout); cdTimers = []; }
+      }, { threshold: 0.3 }).observe(cdRoot);
+    } else { cdVisible = true; cdPlay(); }
+
+    // Animated inpainting: reveal the sampling steps column by column, looping while on screen.
+    (function () {
+      var root = document.getElementById('inpaint-demo');
+      if (!root) return;
+      var cells = root.querySelectorAll('.ip-cell'), timers = [], visible = false;
+      function later(ms, f) { timers.push(setTimeout(f, ms)); }
+      function col(k, f) { Array.prototype.forEach.call(cells, function (c) { if (+c.getAttribute('data-col') === k) f(c); }); }
+      function play() {
+        timers.forEach(clearTimeout); timers = [];
+        root.classList.remove('ip-fade');
+        Array.prototype.forEach.call(cells, function (c) { c.classList.remove('shown', 'current'); });
+        col(0, function (c) { c.classList.add('current'); });
+        var t = 700;
+        for (var k = 1; k <= 5; k++) {
+          (function (k) {
+            later(t, function () {
+              col(k - 1, function (c) { c.classList.remove('current'); });
+              col(k, function (c) { c.classList.add('shown', 'current'); });
+            });
+          })(k);
+          t += 750;
+        }
+        t += 2500;                                            // hold the full trajectory
+        later(t, function () { col(5, function (c) { c.classList.remove('current'); }); root.classList.add('ip-fade'); });
+        later(t + 700, function () { if (visible) play(); });
+      }
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (en) {
+          var was = visible; visible = en[0].isIntersecting;
+          if (visible && !was) play();
+          if (!visible) { timers.forEach(clearTimeout); timers = []; }
+        }, { threshold: 0.3 }).observe(root);
+      } else {
+        Array.prototype.forEach.call(cells, function (c) { c.classList.add('shown'); });
+      }
+    })();
+
+    // PRA: three settings (Without RA / Pos+Neg RA / With PRA) sync the FID chart and the TEM diagram.
+    (function () {
+      var root = document.getElementById('pra-anim'), chart = document.getElementById('pra-chart');
+      if (!root || !chart) return;
+      var modeBtns = document.querySelectorAll('.pra-modes button'), viewBtns = root.querySelectorAll('.pra-toggle button');
+      var views = root.querySelectorAll('.pra-view');
+      var MODES = ['none', 'posneg', 'pra'], idx = 2, auto = null, userPicked = false, visible = false;
+      function each(list, f) { Array.prototype.forEach.call(list, f); }
+      function setMode(m) {
+        idx = MODES.indexOf(m);
+        root.setAttribute('data-mode', m);
+        chart.classList.add('focus');
+        each(chart.querySelectorAll('.fc-series, .fc-leg'), function (g) { g.classList.toggle('on', g.getAttribute('data-key') === m); });
+        each(modeBtns, function (b) { b.setAttribute('aria-selected', b.getAttribute('data-mode') === m ? 'true' : 'false'); });
+      }
+      function startAuto() {
+        clearInterval(auto);
+        if (userPicked || !visible) return;
+        setMode('pra');
+        auto = setInterval(function () { setMode(MODES[(idx + 1) % 3]); }, 3200);
+      }
+      each(modeBtns, function (b) {
+        b.addEventListener('click', function () {
+          userPicked = true; clearInterval(auto);
+          setMode(b.getAttribute('data-mode'));
+          showView('tem');
+        });
+      });
+      function showView(v) {
+        each(views, function (el) { el.hidden = el.getAttribute('data-view') !== v; });
+        each(viewBtns, function (b) { b.setAttribute('aria-selected', b.getAttribute('data-view') === v ? 'true' : 'false'); });
+      }
+      each(viewBtns, function (b) { b.addEventListener('click', function () { showView(b.getAttribute('data-view')); }); });
+      setMode('pra');
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (en) {
+          var was = visible; visible = en[0].isIntersecting;
+          if (visible && !was) startAuto();
+          if (!visible) { clearInterval(auto); if (!userPicked) setMode('pra'); }
+        }, { threshold: 0.3 }).observe(root);
+      }
+    })();
 
     // Sample gallery.
     var classes = ['0007', '0012', '0017', '0051', '0068', '0109', '0113', '0135', '0207', '0308', '0324', '0331',

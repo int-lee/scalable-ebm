@@ -20,10 +20,6 @@ If you find TEM useful for your work, please cite:
   author        = {Lee, Jungsoo and Gladstone, Alexi and Du, Yilun},
   journal       = {arXiv preprint arXiv:2610.31889},
   year          = {2026},
-  eprint        = {2610.31889},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.LG},
-  url           = {https://arxiv.org/abs/2610.31889}
 }
 ```
 
